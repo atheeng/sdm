@@ -19,10 +19,10 @@ public class UserModelTable extends AbstractTableModel {
     List<User> userList = new ArrayList<>();
 
     private final String[] columnNames = new String[]{
-        "Id", "Username", "Role"
+        "Id", "Username", "Role", "View" ,"Delete"
     };
     private final Class[] columnClass = new Class[]{
-        Integer.class, String.class, String.class
+        Integer.class, String.class, String.class , String.class, String.class
     };
 
     public UserModelTable(List<User> userList) {
@@ -61,6 +61,12 @@ public class UserModelTable extends AbstractTableModel {
         }
         else if(2 == columnIndex) {
             return row.getRole();
+        }
+        else if(3 == columnIndex) {
+            return "View";
+        }
+        else if(4 == columnIndex) {
+            return "Delete1";
         }
         return null;
     }

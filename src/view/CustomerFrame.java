@@ -6,6 +6,9 @@ import com.dao.UserDao;
 import com.db.DataBaseConnection;
 import com.dto.UserModelTable;
 import com.model.User;
+import com.utils.ButtonEditor;
+import com.utils.ButtonRenderer;
+import com.utils.TableWithButtonDemo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,7 +45,10 @@ public class CustomerFrame extends javax.swing.JFrame {
        System.out.println("list fetch");
         UserModelTable model = new UserModelTable(list);
         customerTable.setModel(model);
-        this.setTitle("Table Example");
+        customerTable.getColumn("View").setCellRenderer(new ButtonRenderer());
+        customerTable.getColumn("View").setCellEditor(new ButtonEditor(new JCheckBox()));this.setTitle("Table Example");
+        customerTable.getColumn("Delete").setCellRenderer(new ButtonRenderer());
+        customerTable.getColumn("Delete").setCellEditor(new ButtonEditor(new JCheckBox()));this.setTitle("Table Example");
         this.pack();
    }
 
