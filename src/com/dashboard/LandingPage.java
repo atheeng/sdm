@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.dashboard;
 
 import com.DaoImpl.UserDaoImpl;
@@ -17,11 +13,17 @@ import view.CustomerFrame;
 
 public class LandingPage extends javax.swing.JFrame {
 
-    /**
-     * Creates new form LandingPage
-     */
+    User u;
+
     public LandingPage() {
         initComponents();
+    }
+
+    public LandingPage(User u) {
+         initComponents();
+        this.u = u;
+        display_user.setText("Welcome to "+u.getUsername());
+        display_user.setEditable(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -29,6 +31,13 @@ public class LandingPage extends javax.swing.JFrame {
     private void initComponents() {
 
         jComboBox1 = new javax.swing.JComboBox<>();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
+        display_user = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         customerMenu = new javax.swing.JMenu();
         productMenu = new javax.swing.JMenu();
@@ -36,7 +45,26 @@ public class LandingPage extends javax.swing.JFrame {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jMenu1.setText("File");
+        jMenuBar2.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar2.add(jMenu2);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTextField1.setText("jTextField1");
+
+        jTextField2.setText("jTextField2");
+
+        jTextField3.setText("jTextField3");
+
+        display_user.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        display_user.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                display_userActionPerformed(evt);
+            }
+        });
 
         customerMenu.setText("customer");
         customerMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -70,11 +98,15 @@ public class LandingPage extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 247, Short.MAX_VALUE)
+                .addComponent(display_user, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(display_user, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 258, Short.MAX_VALUE))
         );
 
         pack();
@@ -86,45 +118,18 @@ public class LandingPage extends javax.swing.JFrame {
     }//GEN-LAST:event_customerMenuActionPerformed
 
     private void customerMenuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_customerMenuMenuSelected
-CustomerFrame c = new CustomerFrame();
-this.setVisible(false);
-c.setVisible(true);
-//        UserDao ud = new UserDaoImpl();
-//        List<User> list = ud.getAllUsers();
-//        CustomerFrame c = new CustomerFrame();
-//        c.tableShow(list);
-//        this.setVisible(false);
-//        c.setVisible(true);
+        CustomerFrame c = new CustomerFrame();
+        this.setVisible(false);
+        c.setVisible(true);
     }//GEN-LAST:event_customerMenuMenuSelected
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LandingPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LandingPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LandingPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LandingPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void display_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_display_userActionPerformed
+        
+    }//GEN-LAST:event_display_userActionPerformed
 
-        /* Create and display the form */
+  
+    public static void main(String args[]) {
+     
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new LandingPage().setVisible(true);
@@ -134,8 +139,15 @@ c.setVisible(true);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu customerMenu;
+    private javax.swing.JTextField display_user;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
     private javax.swing.JMenu orderMenu;
     private javax.swing.JMenu productMenu;
     // End of variables declaration//GEN-END:variables

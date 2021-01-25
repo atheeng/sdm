@@ -115,6 +115,11 @@ public class CustomerFrame extends javax.swing.JFrame {
         jPanel2.add(update);
 
         search.setText("search");
+        search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchActionPerformed(evt);
+            }
+        });
         jPanel2.add(search);
 
         delete.setText("delete");
@@ -197,9 +202,9 @@ public class CustomerFrame extends javax.swing.JFrame {
         String passwordText = password.getText();
         String roles = role.getText().toUpperCase();
         RoleType roleText = RoleType.valueOf(roles);
-        User u = new User(usernameText, passwordText, roleText);
+//        User u = new User(usernameText, passwordText, roleText);
         UserDao userDao = new UserDaoImpl();
-        String result = userDao.save(u);
+//        String result = userDao.save(u);
         JOptionPane.showMessageDialog(null,
                 "WARNING.",
                 "Warning",
@@ -207,6 +212,10 @@ public class CustomerFrame extends javax.swing.JFrame {
        loadUsers();
 
     }//GEN-LAST:event_saveActionPerformed
+
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchActionPerformed
 
     public static void main(String args[]) {
         /* Create and display the form */

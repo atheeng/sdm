@@ -82,7 +82,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getById(int id) {
         Connection conn = null;
-        User u = new User();
+        User user = new User();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             String query = "select * from user where id=? ";
@@ -90,16 +90,16 @@ public class UserDaoImpl implements UserDao {
             preparedStmt.setInt(1, id);
             ResultSet rs = preparedStmt.executeQuery();
             while (rs.next()) {
-                u.setId(rs.getInt(1));
-                u.setUsername(rs.getString(2));
-                u.setRole(RoleType.valueOf(rs.getString(4)));
+                user.setId(rs.getInt(1));
+                user.setUsername(rs.getString(2));
+                user.setRole(RoleType.valueOf(rs.getString(4)));
             }
             rs.close();
             preparedStmt.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return u;
+        return user;
     }
 
     @Override
@@ -107,5 +107,30 @@ public class UserDaoImpl implements UserDao {
         System.out.println("");
 
     }
+
+    @Override
+    public User getByUserPassword(String username, String password) {
+        Connection conn = null;
+        User user = new User();
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            String query = "select * from user where username=? AND password=? ";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setString(1, username);
+             preparedStmt.setString(2, password);
+            ResultSet rs = preparedStmt.executeQuery();
+            while (rs.next()) {
+                user.setId(rs.getInt(1));
+                user.setUsername(rs.getString(2));
+                user.setRole(RoleType.valueOf(rs.getString(4)));
+            }
+            rs.close();
+            preparedStmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return user;
+    }
+  
 
 }

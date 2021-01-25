@@ -19,4 +19,5 @@ public interface UserDao {
     boolean deleteUser(int id);
     User getById(int id);
     void getAllUserList();
+    User getByUserPassword(String username,String password);
 }

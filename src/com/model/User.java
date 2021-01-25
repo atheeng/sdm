@@ -4,20 +4,18 @@ import com.Enum.RoleType;
 
 public class User {
 
+    public User() {
+    }
+
     private int id;
 
     private String username;
     private String password;
     private RoleType role;
-
-    public User(String username, String password, RoleType role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User() {
-    }
+    private String firstName;
+    private String lastName;
+    private String mobileNo;
+    private String address;
 
     public int getId() {
         return id;
@@ -51,8 +49,48 @@ public class User {
         this.role = role;
     }
 
-    public Object getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String getFirstName() {
+        return firstName;
     }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public User(String username, String password, RoleType role, String firstName, String lastName, String mobileNo, String address) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.mobileNo = mobileNo;
+        this.address = address;
+    }
+
+    
 
 }
