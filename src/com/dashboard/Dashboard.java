@@ -1,4 +1,3 @@
-
 package com.dashboard;
 
 import com.DaoImpl.UserDaoImpl;
@@ -7,23 +6,29 @@ import com.dto.UserModelTable;
 import com.model.User;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import view.CustomerFrame;
+import view.ProductFrame;
 
-public class LandingPage extends javax.swing.JFrame {
+public class Dashboard extends javax.swing.JFrame {
 
-    User u;
+    User user;
 
-    public LandingPage() {
+    public Dashboard() {
         initComponents();
     }
 
-    public LandingPage(User u) {
-         initComponents();
-        this.u = u;
-        display_user.setText("Welcome to "+u.getUsername());
+    public Dashboard(User user) {
+        initComponents();
+        this.user = user;
+        display_user.setText("Welcome to " + user.getUsername());
         display_user.setEditable(false);
+//        productMenu.setVisible(false);
+        if (user.getRole().toString() == "USER") {
+
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -86,6 +91,16 @@ public class LandingPage extends javax.swing.JFrame {
 
         productMenu.setText("products");
         productMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        productMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                productMenuMouseClicked(evt);
+            }
+        });
+        productMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                productMenuActionPerformed(evt);
+            }
+        });
         jMenuBar1.add(productMenu);
 
         orderMenu.setText("orders");
@@ -99,8 +114,8 @@ public class LandingPage extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 247, Short.MAX_VALUE)
-                .addComponent(display_user, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 330, Short.MAX_VALUE)
+                .addComponent(display_user, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,21 +133,35 @@ public class LandingPage extends javax.swing.JFrame {
     }//GEN-LAST:event_customerMenuActionPerformed
 
     private void customerMenuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_customerMenuMenuSelected
-        CustomerFrame c = new CustomerFrame();
+        CustomerFrame customerFrame = new CustomerFrame();
+        customerFrame.loadUsers();
+        customerFrame.loginUserDetails(user);
         this.setVisible(false);
-        c.setVisible(true);
+        customerFrame.setVisible(true);
     }//GEN-LAST:event_customerMenuMenuSelected
 
     private void display_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_display_userActionPerformed
-        
+
     }//GEN-LAST:event_display_userActionPerformed
 
-  
+    private void productMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productMenuActionPerformed
+
+    }//GEN-LAST:event_productMenuActionPerformed
+
+    private void productMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_productMenuMouseClicked
+        JOptionPane.showMessageDialog(this, "product");
+        ProductFrame productFrame = new ProductFrame();
+        productFrame.loginUserDetails(user);
+        this.setVisible(false);
+        productFrame.setVisible(true);
+
+    }//GEN-LAST:event_productMenuMouseClicked
+
     public static void main(String args[]) {
-     
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LandingPage().setVisible(true);
+                new Dashboard().setVisible(true);
             }
         });
     }

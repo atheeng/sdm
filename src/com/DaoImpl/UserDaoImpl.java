@@ -114,7 +114,7 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "select * from user where username=? AND password=? ";
+            String query = "select id,username,role from user where username=? AND password=? ";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setString(1, username);
              preparedStmt.setString(2, password);
@@ -122,7 +122,7 @@ public class UserDaoImpl implements UserDao {
             while (rs.next()) {
                 user.setId(rs.getInt(1));
                 user.setUsername(rs.getString(2));
-                user.setRole(RoleType.valueOf(rs.getString(4)));
+                user.setRole(RoleType.valueOf(rs.getString(3)));
             }
             rs.close();
             preparedStmt.close();

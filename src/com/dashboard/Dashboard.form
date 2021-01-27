@@ -56,6 +56,10 @@
               <Font name="Segoe UI" size="12" style="1"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="productMenuMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="productMenuActionPerformed"/>
+          </Events>
         </Menu>
         <Menu class="javax.swing.JMenu" name="orderMenu">
           <Properties>
@@ -92,8 +96,8 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace min="0" pref="247" max="32767" attributes="0"/>
-              <Component id="display_user" min="-2" pref="153" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="330" max="32767" attributes="0"/>
+              <Component id="display_user" min="-2" pref="254" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

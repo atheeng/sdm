@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 package view;
+
 import com.DaoImpl.UserDaoImpl;
 import com.dao.UserDao;
-import com.dashboard.LandingPage;
+import com.dashboard.Dashboard;
 import com.model.User;
 import javax.swing.JOptionPane;
 import jdk.nashorn.internal.scripts.JO;
@@ -28,8 +29,8 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         username = new javax.swing.JTextField();
-        password = new javax.swing.JTextField();
         login = new javax.swing.JButton();
+        password = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -40,12 +41,6 @@ public class LoginForm extends javax.swing.JFrame {
         username.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 usernameActionPerformed(evt);
-            }
-        });
-
-        password.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passwordActionPerformed(evt);
             }
         });
 
@@ -66,11 +61,10 @@ public class LoginForm extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(login)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(username)
-                        .addComponent(password, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)))
+                    .addComponent(username, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                    .addComponent(password))
                 .addContainerGap(85, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -97,25 +91,31 @@ public class LoginForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_usernameActionPerformed
 
-    private void passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_passwordActionPerformed
-
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
         // TODO add your handling code here:
-        
-        UserDao user=new UserDaoImpl();
-       String usernameText=username.getText();
-       String passwordText=password.getText();
-        User uDetail=user.getByUserPassword(usernameText,passwordText);
-        System.out.println("user"+uDetail.getUsername());
-        this.setVisible(false);
-        LandingPage landingPage= new LandingPage(uDetail);
-        landingPage.setVisible(true);
-        
+
+        UserDao user = new UserDaoImpl();
+        String usernameText = username.getText();
+        String passwordText = password.getText();
+        System.out.println("user" + passwordText);
+        if (usernameText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "username should be enter");
+        } else if (passwordText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "password should be enter");
+        } else {
+            User uDetail = user.getByUserPassword(usernameText, passwordText);
+            if (uDetail.getUsername() != null) {
+                this.setVisible(false);
+                Dashboard landingPage = new Dashboard(uDetail);
+                landingPage.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "username or password invalid");
+            }
+        }
+
+
     }//GEN-LAST:event_loginActionPerformed
 
-  
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -128,7 +128,7 @@ public class LoginForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JButton login;
-    private javax.swing.JTextField password;
+    private javax.swing.JPasswordField password;
     private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables
 }
