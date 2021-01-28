@@ -8,16 +8,17 @@ public class DataBaseConnection {
 
     private static DataBaseConnection dbc;
     private static Connection con;
-    private String url = "jdbc:mysql://localhost:3306/online_order";
+//    private String url = "jdbc:mysql://localhost:3306/online_order";
+    private String url = "jdbc:mysql://localhost:3306/online_shopping";
     private String username = "root";
-    private String password = "root";
+    private String password ="";
 
    private DataBaseConnection() throws SQLException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.con = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException ex) {
-            System.out.println("Database Connection Creation Failed : " + ex.getMessage());
+            System.out.println("Database Connection Creation Failed : " + ex.getMessage() +"-"+ex.getCause());
         }
     }
 

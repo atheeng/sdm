@@ -121,24 +121,12 @@ public class Dashboard extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(display_user, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 258, Short.MAX_VALUE))
+                .addGap(0, 279, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void customerMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customerMenuActionPerformed
-
-    }//GEN-LAST:event_customerMenuActionPerformed
-
-    private void customerMenuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_customerMenuMenuSelected
-        CustomerFrame customerFrame = new CustomerFrame();
-        customerFrame.loadUsers();
-        customerFrame.loginUserDetails(user);
-        this.setVisible(false);
-        customerFrame.setVisible(true);
-    }//GEN-LAST:event_customerMenuMenuSelected
 
     private void display_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_display_userActionPerformed
 
@@ -154,8 +142,19 @@ public class Dashboard extends javax.swing.JFrame {
         productFrame.loginUserDetails(user);
         this.setVisible(false);
         productFrame.setVisible(true);
-
     }//GEN-LAST:event_productMenuMouseClicked
+
+    private void customerMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customerMenuActionPerformed
+
+    }//GEN-LAST:event_customerMenuActionPerformed
+
+    private void customerMenuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_customerMenuMenuSelected
+        CustomerFrame customerFrame = new CustomerFrame();
+        customerFrame.loadUsers();
+        customerFrame.loginUserDetails(user);
+        this.setVisible(false);
+        customerFrame.setVisible(true);
+    }//GEN-LAST:event_customerMenuMenuSelected
 
     public static void main(String args[]) {
 
