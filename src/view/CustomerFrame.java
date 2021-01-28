@@ -30,29 +30,33 @@ import javax.swing.table.DefaultTableModel;
 public class CustomerFrame extends javax.swing.JFrame {
 
     User user;
+    String customerId;
 
     public CustomerFrame() {
         initComponents();
         loadUsers();
+        if (txt_username.getText() != "") {
+        }
+
     }
 
     public void loadUsers() {
         UserDao ud = new UserDaoImpl();
         List<User> list = ud.getAllUsers();
-        System.out.println("list fetch");
         UserModelTable model = new UserModelTable(list);
         customerTable.setModel(model);
-        customerTable.getColumn("View").setCellRenderer(new ButtonRenderer());
-        customerTable.getColumn("View").setCellEditor(new ButtonEditor(new JCheckBox()));
-        this.setTitle("Table Example");
-        customerTable.getColumn("Delete").setCellRenderer(new ButtonRenderer());
-        customerTable.getColumn("Delete").setCellEditor(new ButtonEditor(new JCheckBox()));
-        this.setTitle("Table Example");
-        this.pack();
+//        customerTable.getColumn("View").setCellRenderer(new ButtonRenderer());
+//        customerTable.getColumn("View").setCellEditor(new ButtonEditor(new JCheckBox()));
+//        this.setTitle("Table Example");
+//        customerTable.getColumn("Delete").setCellRenderer(new ButtonRenderer());
+//        customerTable.getColumn("Delete").setCellEditor(new ButtonEditor(new JCheckBox()));
+//        this.setTitle("Table Example");
+//        this.pack();
     }
 
     public void loginUserDetails(User user) {
         this.user = user;
+        jLabel8.setText("WELCOME "+user.getUsername());
     }
 
     @SuppressWarnings("unchecked")
@@ -63,7 +67,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txt_first_name = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txt_last_name = new javax.swing.JPasswordField();
+        txt_last_name = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         txt_username = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -81,10 +85,14 @@ public class CustomerFrame extends javax.swing.JFrame {
         delete = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         customerTable = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
         dashboard = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        logout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Customer Details"));
         jPanel1.setLayout(new java.awt.GridLayout(7, 2, 10, 10));
 
@@ -98,10 +106,18 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jPanel1.add(txt_first_name);
 
+        jLabel5.setBackground(new java.awt.Color(102, 102, 0));
         jLabel5.setText("last name");
         jPanel1.add(jLabel5);
+
+        txt_last_name.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_last_nameActionPerformed(evt);
+            }
+        });
         jPanel1.add(txt_last_name);
 
+        jLabel1.setBackground(java.awt.SystemColor.activeCaption);
         jLabel1.setText("username");
         jPanel1.add(jLabel1);
 
@@ -112,6 +128,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jPanel1.add(txt_username);
 
+        jLabel4.setBackground(new java.awt.Color(0, 0, 255));
         jLabel4.setText("password");
         jPanel1.add(jLabel4);
 
@@ -135,6 +152,8 @@ public class CustomerFrame extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanel2.setLayout(new java.awt.GridLayout(1, 4, 10, 0));
 
+        save.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        save.setForeground(new java.awt.Color(0, 0, 255));
         save.setText("save");
         save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -143,9 +162,18 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jPanel2.add(save);
 
+        update.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        update.setForeground(new java.awt.Color(0, 226, 0));
         update.setText("update");
+        update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateActionPerformed(evt);
+            }
+        });
         jPanel2.add(update);
 
+        search.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        search.setForeground(new java.awt.Color(0, 153, 153));
         search.setText("search");
         search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,19 +182,21 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jPanel2.add(search);
 
+        delete.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        delete.setForeground(new java.awt.Color(255, 0, 51));
         delete.setText("delete");
         jPanel2.add(delete);
 
         customerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null}
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "id", "username", "role"
+                "id", "username", "full name", "role", "address", "contact no", "action"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -180,12 +210,43 @@ public class CustomerFrame extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(customerTable);
 
-        dashboard.setText("BACK");
+        dashboard.setText("DASHBOARD");
         dashboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dashboardActionPerformed(evt);
             }
         });
+
+        jLabel8.setText("WELCOME TO");
+
+        logout.setText("LOGOUT");
+        logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(dashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel8))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(logout))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dashboard)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logout))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -194,26 +255,23 @@ public class CustomerFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(dashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(dashboard)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -226,26 +284,34 @@ public class CustomerFrame extends javax.swing.JFrame {
 
     private void customerTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_customerTableMouseClicked
         // TODO add your handling code here:
-        String customerId = customerTable.getValueAt(customerTable.getSelectedRow(), 0).toString();
+        customerId = customerTable.getValueAt(customerTable.getSelectedRow(), 0).toString();
         UserDao ud = new UserDaoImpl();
-        User u = ud.getById(Integer.parseInt(customerId));
-        txt_first_name.setText(u.getUsername());
-        txt_last_name.setText(u.getPassword());
-        cb_role.setSelectedItem(u.getRole().toString());
+        User user = ud.getById(Integer.parseInt(customerId));
+        txt_username.setText(user.getUsername());
+        txt_first_name.setText(user.getFirstName());
+        txt_last_name.setText(user.getLastName());
+        txt_password.setText(user.getPassword());
+        txt_address.setText(user.getAddress());
+        txt_mobile_no.setText(user.getMobileNo());
+        cb_role.setSelectedItem(user.getRole().toString());
 
     }//GEN-LAST:event_customerTableMouseClicked
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        String usernameText = txt_first_name.getText();
-        String passwordText = txt_last_name.getPassword().toString();
+        String userName = txt_first_name.getText();
+        String password = txt_password.getText();
         String roles = cb_role.getSelectedItem().toString();
         RoleType roleText = RoleType.valueOf(roles);
-//        User u = new User(usernameText, passwordText, roleText);
+        String firstName = txt_first_name.getText();
+        String lastName = txt_last_name.getText();
+        String address = txt_address.getText();
+        String mobileNo = txt_mobile_no.getText();
+        User user = new User(userName, password, roleText, firstName, lastName, mobileNo, address);
         UserDao userDao = new UserDaoImpl();
-//        String result = userDao.save(u);
+       String result= userDao.saveUpdate(user);
         JOptionPane.showMessageDialog(null,
-                "WARNING.",
-                "Warning",
+                result+"Saved. successfully",
+                "Success",
                 JOptionPane.WARNING_MESSAGE);
         loadUsers();
 
@@ -259,12 +325,57 @@ public class CustomerFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_usernameActionPerformed
 
+    private void txt_last_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_last_nameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_last_nameActionPerformed
+
+    private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
+        int userId = Integer.parseInt(customerId);
+        String userName = txt_first_name.getText();
+        String password = txt_password.getText();
+        String roles = cb_role.getSelectedItem().toString();
+        RoleType roleText = RoleType.valueOf(roles);
+        String firstName = txt_first_name.getText();
+        String lastName = txt_last_name.getText();
+        String address = txt_address.getText();
+        String mobileNo = txt_mobile_no.getText();
+        User user=new User();
+        user.setId(userId);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAddress(address);
+        user.setRole(roleText);
+        user.setUsername(userName);
+        user.setPassword(password);
+        user.setMobileNo(mobileNo);
+        UserDao userDao=new UserDaoImpl();
+       String result= userDao.saveUpdate(user);
+       txt_first_name.setText("");
+       txt_last_name.setText("");
+       txt_address.setText("");
+       txt_mobile_no.setText("");
+       txt_username.setText("");
+       txt_password.setText("");
+           JOptionPane.showMessageDialog(null,
+                result+"Updated successfully",
+                "Success",
+                JOptionPane.WARNING_MESSAGE);
+        
+        loadUsers();
+    }//GEN-LAST:event_updateActionPerformed
+
     private void dashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dashboardActionPerformed
         this.setVisible(false);
         Dashboard landingPage = new Dashboard(user);
         landingPage.setVisible(true);
-
     }//GEN-LAST:event_dashboardActionPerformed
+
+    private void logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        LoginForm loginForm = new LoginForm();
+        loginForm.setVisible(true);
+    }//GEN-LAST:event_logoutActionPerformed
 
     public static void main(String args[]) {
         /* Create and display the form */
@@ -274,6 +385,7 @@ public class CustomerFrame extends javax.swing.JFrame {
             }
         });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cb_role;
@@ -287,14 +399,17 @@ public class CustomerFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton logout;
     private javax.swing.JButton save;
     private javax.swing.JButton search;
     private javax.swing.JTextField txt_address;
     private javax.swing.JTextField txt_first_name;
-    private javax.swing.JPasswordField txt_last_name;
+    private javax.swing.JTextField txt_last_name;
     private javax.swing.JTextField txt_mobile_no;
     private javax.swing.JPasswordField txt_password;
     private javax.swing.JTextField txt_username;

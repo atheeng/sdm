@@ -16,6 +16,7 @@ public class User {
     private String lastName;
     private String mobileNo;
     private String address;
+    
 
     public int getId() {
         return id;

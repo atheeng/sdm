@@ -25,26 +25,6 @@ import view.CustomerFrame;
 public class UserDaoImpl implements UserDao {
 
     @Override
-    public String save(User user) {
-        Connection conn = null;
-        try {
-            conn = DataBaseConnection.getInstance().getConnection();
-            String query = "insert into user (username, password, role) values (?, ?, ?)";
-            PreparedStatement preparedStmt = conn.prepareStatement(query);
-            preparedStmt.setString(1, user.getUsername());
-            preparedStmt.setString(2, user.getPassword());
-            String role = user.getRole().toString();
-            preparedStmt.setString(3, role);
-            preparedStmt.executeUpdate();
-            preparedStmt.close();
-            System.out.println("saved");
-        } catch (Exception e) {
-            System.out.println("error:" + e.getMessage());
-        }
-        return user.getUsername();
-    }
-
-    @Override
     public List<User> getAllUsers() {
 
         List<User> userList = new ArrayList<>();
@@ -58,6 +38,10 @@ public class UserDaoImpl implements UserDao {
                 u.setId(rs.getInt(1));
                 u.setUsername(rs.getString(2));
                 u.setRole(RoleType.valueOf(rs.getString(4)));
+                u.setFirstName(rs.getString(5));
+                u.setLastName(rs.getString(6));
+                u.setAddress(rs.getString(7));
+                u.setMobileNo(rs.getString(8));
                 userList.add(u);
             }
             rs.close();
@@ -66,7 +50,6 @@ public class UserDaoImpl implements UserDao {
             System.out.println(e.getMessage());
         }
         return userList;
-
     }
 
     @Override
@@ -85,14 +68,19 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "select * from user where id=? ";
+            String query = "select id,username,password,role,firstName,lastName,address,mobileNo from user where id=? ";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setInt(1, id);
             ResultSet rs = preparedStmt.executeQuery();
             while (rs.next()) {
                 user.setId(rs.getInt(1));
                 user.setUsername(rs.getString(2));
+                user.setPassword(rs.getString(3));
                 user.setRole(RoleType.valueOf(rs.getString(4)));
+                user.setFirstName(rs.getString(5));
+                user.setLastName(rs.getString(6));
+                user.setAddress(rs.getString(7));
+                user.setMobileNo(rs.getString(8));
             }
             rs.close();
             preparedStmt.close();
@@ -114,10 +102,10 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "select id,username,role from user where username=? AND password=? ";
+            String query = "select id,username,role from user where username=? AND password=sha(?)";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setString(1, username);
-             preparedStmt.setString(2, password);
+            preparedStmt.setString(2, password);
             ResultSet rs = preparedStmt.executeQuery();
             while (rs.next()) {
                 user.setId(rs.getInt(1));
@@ -131,6 +119,54 @@ public class UserDaoImpl implements UserDao {
         }
         return user;
     }
-  
+
+    @Override
+    public String saveUpdate(User user) {
+        Connection conn = null;
+        int id = user.getId();
+       
+        if (id==0) {
+            try {
+                conn = DataBaseConnection.getInstance().getConnection();
+                String query = "insert into user (username, password, role,firstName,lastName,address,mobileNo) values (?, sha(?), ?,?, ?, ?,?)";
+                PreparedStatement preparedStmt = conn.prepareStatement(query);
+                preparedStmt.setString(1, user.getUsername());
+                preparedStmt.setString(2, user.getPassword());
+                String role = user.getRole().toString();
+                preparedStmt.setString(3, role);
+                preparedStmt.setString(4, user.getFirstName());
+                preparedStmt.setString(5, user.getLastName());
+                preparedStmt.setString(6, user.getAddress());
+                preparedStmt.setString(7, user.getMobileNo());
+                preparedStmt.executeUpdate();
+                preparedStmt.close();
+                System.out.println("saved");
+            } catch (Exception e) {
+                System.out.println("error:" + e.getMessage());
+            }
+        } else {
+               try {
+                conn = DataBaseConnection.getInstance().getConnection();
+                String query = "update user set username=?, password=sha(?), role=?,firstName=?,lastName=?,address=?,mobileNo=? where id=?";
+                PreparedStatement preparedStmt = conn.prepareStatement(query);
+                preparedStmt.setString(1, user.getUsername());
+                preparedStmt.setString(2, user.getPassword());
+                String role = user.getRole().toString();
+                preparedStmt.setString(3, role);
+                preparedStmt.setString(4, user.getFirstName());
+                preparedStmt.setString(5, user.getLastName());
+                preparedStmt.setString(6, user.getAddress());
+                preparedStmt.setString(7, user.getMobileNo());
+                preparedStmt.setInt(8, user.getId());
+                preparedStmt.executeUpdate();
+                preparedStmt.close();
+                System.out.println("Update");
+            } catch (Exception e) {
+                System.out.println("error:" + e.getMessage());
+            }
+        }
+        return user.getUsername();
+
+    }
 
 }

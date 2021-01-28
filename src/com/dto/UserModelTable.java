@@ -10,19 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-/**
- *
- * @author salinthapa
- */
 public class UserModelTable extends AbstractTableModel {
 
     List<User> userList = new ArrayList<>();
 
     private final String[] columnNames = new String[]{
-        "Id", "Username", "Role", "View" ,"Delete"
+        "Id", "Username","Role", "First Name", "Last Name", "Address","MobileNo","Action"
     };
     private final Class[] columnClass = new Class[]{
-        Integer.class, String.class, String.class , String.class, String.class
+        Integer.class, String.class, String.class , String.class, String.class,String.class, String.class,String.class
     };
 
     public UserModelTable(List<User> userList) {
@@ -60,13 +56,22 @@ public class UserModelTable extends AbstractTableModel {
             return row.getUsername();
         }
         else if(2 == columnIndex) {
-            return row.getRole();
+             return row.getRole().toString();
         }
         else if(3 == columnIndex) {
-            return "View";
+            return row.getFirstName();
         }
         else if(4 == columnIndex) {
-            return "Delete1";
+            return row.getLastName();
+        }
+         else if(5 == columnIndex) {
+            return row.getAddress();
+        }
+        else if(6 == columnIndex) {
+            return row.getMobileNo();
+        }
+         else if(6 == columnIndex) {
+            return "Action";
         }
         return null;
     }

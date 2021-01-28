@@ -9,11 +9,15 @@ package com.utils;
  *
  * @author Arun Tamang
  */
+import com.DaoImpl.UserDaoImpl;
+import com.dao.UserDao;
+import com.model.User;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -30,9 +34,8 @@ import javax.swing.table.TableModel;
 public class TableWithButtonDemo {
 
     private JFrame frame = new JFrame("Table Demo");
-    private String[] columnNames = {"String", "Integer", "Float", ""};
-    private Object[][] data = {{"Dummy", new Integer(12), new Float(12.15), "Consulter"}};
-    private TableModel model = new DefaultTableModel(data, columnNames) {
+    private String[] columnNames = {"String", "Integer", "Float", "Action",""};
+    private DefaultTableModel model = new DefaultTableModel() {
         private static final long serialVersionUID = 1L;
 
         public boolean isCellEditable(int row, int column) {
@@ -42,8 +45,24 @@ public class TableWithButtonDemo {
     private JTable table = new JTable(model);
 
     public TableWithButtonDemo() {
+        UserDao userDao = new UserDaoImpl();
+        List<User> users = userDao.getAllUsers();
+        model.setColumnIdentifiers(columnNames);
+        for(User user: users){
+            model.addRow(
+                new String[]{
+                    String.valueOf(user.getId()),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getMobileNo(),
+                    user.getLastName()
+            });
+            table.setModel(model);
+        }
         table.getColumnModel().getColumn(3).setCellRenderer(new ClientsTableButtonRenderer());
         table.getColumnModel().getColumn(3).setCellEditor(new ClientsTableRenderer(new JCheckBox()));
+        table.getColumnModel().getColumn(4).setCellRenderer(new ClientsTableButtonRenderer());
+        table.getColumnModel().getColumn(4).setCellEditor(new ClientsTableRenderer(new JCheckBox()));
         table.setPreferredScrollableViewportSize(table.getPreferredSize());
         table.setShowHorizontalLines(true);
         table.setShowVerticalLines(false);

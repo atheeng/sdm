@@ -13,7 +13,7 @@ import java.util.List;
  * @author salinthapa
  */
 public interface UserDao {
-    String save(User user);
+    String saveUpdate(User user);
     List<User> getAllUsers();
     boolean updateUser(int id);
     boolean deleteUser(int id);
