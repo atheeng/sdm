@@ -8,10 +8,10 @@ public class DataBaseConnection {
 
     private static DataBaseConnection dbc;
     private static Connection con;
-//    private String url = "jdbc:mysql://localhost:3306/online_order";
-    private String url = "jdbc:mysql://localhost:3306/online_shopping";
+    private String url = "jdbc:mysql://localhost:3306/online_order";
+//    private String url = "jdbc:mysql://localhost:3306/online_shopping";
     private String username = "root";
-    private String password ="";
+    private String password ="root";
 
    private DataBaseConnection() throws SQLException {
         try {
