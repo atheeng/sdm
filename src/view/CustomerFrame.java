@@ -1,6 +1,6 @@
 package view;
 
-import com.DaoImpl.UserDaoImpl;
+import com.dao.daoImpl.UserDaoImpl;
 import com.Enum.RoleType;
 import com.dao.UserDao;
 import com.dashboard.Dashboard;

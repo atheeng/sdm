@@ -9,7 +9,7 @@ package com.utils;
  *
  * @author Arun Tamang
  */
-import com.DaoImpl.UserDaoImpl;
+import com.dao.daoImpl.UserDaoImpl;
 import com.dao.UserDao;
 import com.model.User;
 import java.awt.Color;

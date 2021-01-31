@@ -5,7 +5,7 @@
  */
 package view;
 
-import com.DaoImpl.UserDaoImpl;
+import com.dao.daoImpl.UserDaoImpl;
 import com.dao.UserDao;
 import com.dashboard.Dashboard;
 import com.model.User;
@@ -132,9 +132,9 @@ public class LoginForm extends javax.swing.JFrame {
         String passwordText = password.getText();
         System.out.println("user" + passwordText);
         if (usernameText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "username should be enter");
+            JOptionPane.showMessageDialog(this, "username is required");
         } else if (passwordText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "password should be enter");
+            JOptionPane.showMessageDialog(this, "password is required");
         } else {
             User uDetail = user.getByUserPassword(usernameText, passwordText);
             if (uDetail.getUsername() != null) {

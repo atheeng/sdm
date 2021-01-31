@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.DaoImpl;
+package com.dao.daoImpl;
 
 import com.Enum.RoleType;
 import com.dao.UserDao;
@@ -32,7 +32,7 @@ public class UserDaoImpl implements UserDao {
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM USER");
+            ResultSet rs = statement.executeQuery("SELECT * FROM USER WHERE STATUS='ACTIVE'");
             while (rs.next()) {
                 User u = new User();
                 u.setId(rs.getInt(1));
@@ -53,13 +53,46 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean updateUser(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean existingUser(String username) {
+
+        Connection conn = null;
+        Integer id = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            String query = "SELECT id FROM USER WHERE USERNAME =? ";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setString(1, username);
+            ResultSet rs = preparedStmt.executeQuery();
+            while (rs.next()) {
+                id = rs.getInt(1);
+            }
+            rs.close();
+            preparedStmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        if (id != null) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
     public boolean deleteUser(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection conn = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            String query = "update user set status='INACTIVE' where id=?";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setInt(1, id);
+            preparedStmt.executeUpdate();
+            preparedStmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
     }
 
     @Override
@@ -68,7 +101,7 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "select id,username,password,role,firstName,lastName,address,mobileNo from user where id=? ";
+            String query = "select id,username,password,role,first_name,last_name,address,mobile_no from user where id=? ";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setInt(1, id);
             ResultSet rs = preparedStmt.executeQuery();
@@ -124,30 +157,38 @@ public class UserDaoImpl implements UserDao {
     public String saveUpdate(User user) {
         Connection conn = null;
         int id = user.getId();
-       
-        if (id==0) {
+
+        if (id == 0) {
+            boolean existingUser = existingUser(user.getUsername());
+            if (existingUser == true) {
+                return user.getUsername() + " username is already exist please make unique. ";
+            } else {
+                try {
+                    conn = DataBaseConnection.getInstance().getConnection();
+                    String query = "insert into user (username, password, role,first_name,last_name,address,mobile_no,status) values (?, sha(?), ?,?, ?, ?,?,?)";
+                    PreparedStatement preparedStmt = conn.prepareStatement(query);
+                    preparedStmt.setString(1, user.getUsername());
+                    preparedStmt.setString(2, user.getPassword());
+                    String role = user.getRole().toString();
+                    preparedStmt.setString(3, role);
+                    preparedStmt.setString(4, user.getFirstName());
+                    preparedStmt.setString(5, user.getLastName());
+                    preparedStmt.setString(6, user.getAddress());
+                    preparedStmt.setString(7, user.getMobileNo());
+                    preparedStmt.setString(8, "ACTIVE");
+                    preparedStmt.executeUpdate();
+                    preparedStmt.close();
+                    System.out.println("saved");
+                } catch (Exception e) {
+                    System.out.println("error:" + e.getMessage());
+                }
+                return user.getUsername() + " Username Successfully Saved";
+            }
+
+        } else {
             try {
                 conn = DataBaseConnection.getInstance().getConnection();
-                String query = "insert into user (username, password, role,firstName,lastName,address,mobileNo) values (?, sha(?), ?,?, ?, ?,?)";
-                PreparedStatement preparedStmt = conn.prepareStatement(query);
-                preparedStmt.setString(1, user.getUsername());
-                preparedStmt.setString(2, user.getPassword());
-                String role = user.getRole().toString();
-                preparedStmt.setString(3, role);
-                preparedStmt.setString(4, user.getFirstName());
-                preparedStmt.setString(5, user.getLastName());
-                preparedStmt.setString(6, user.getAddress());
-                preparedStmt.setString(7, user.getMobileNo());
-                preparedStmt.executeUpdate();
-                preparedStmt.close();
-                System.out.println("saved");
-            } catch (Exception e) {
-                System.out.println("error:" + e.getMessage());
-            }
-        } else {
-               try {
-                conn = DataBaseConnection.getInstance().getConnection();
-                String query = "update user set username=?, password=sha(?), role=?,firstName=?,lastName=?,address=?,mobileNo=? where id=?";
+                String query = "update user set username=?, password=sha(?), role=?,first_name=?,last_name=?,address=?,mobile_no=? where id=?";
                 PreparedStatement preparedStmt = conn.prepareStatement(query);
                 preparedStmt.setString(1, user.getUsername());
                 preparedStmt.setString(2, user.getPassword());
@@ -164,9 +205,36 @@ public class UserDaoImpl implements UserDao {
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
+            return user.getUsername() + " Username Successfully Updated";
         }
-        return user.getUsername();
 
+    }
+
+    @Override
+    public List<User> getAlluserByname(String search) {
+        List<User> userList = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM USER WHERE USERNAME LIKE '" + search + "%' AND STATUS='ACTIVE'");
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt(1));
+                u.setUsername(rs.getString(2));
+                u.setRole(RoleType.valueOf(rs.getString(4)));
+                u.setFirstName(rs.getString(5));
+                u.setLastName(rs.getString(6));
+                u.setAddress(rs.getString(7));
+                u.setMobileNo(rs.getString(8));
+                userList.add(u);
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return userList;
     }
 
 }
