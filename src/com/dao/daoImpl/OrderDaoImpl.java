@@ -8,6 +8,7 @@ package com.dao.daoImpl;
 import com.dao.OrderDao;
 import com.db.DataBaseConnection;
 import com.model.TempOrder;
+import com.util.ProductReserve;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +30,7 @@ public class OrderDaoImpl implements OrderDao {
         java.sql.Date date = new java.sql.Date(millis);
         int id = 0;
         int idrows = 0;
-        if (id == 0) {
+        if (tempOrder.getId() == 0) {
 //            for id
             boolean existingUser = existingItem(tempOrder.getItem());
             if (existingUser == true) {
@@ -39,7 +40,6 @@ public class OrderDaoImpl implements OrderDao {
                     conn = DataBaseConnection.getInstance().getConnection();
                     Statement statement = conn.createStatement();
                     ResultSet rs = statement.executeQuery("SELECT COUNT(*) as id FROM temp_order");
-
                     while (rs.next()) {
                         idrows = rs.getInt(1);
                     }
@@ -66,11 +66,11 @@ public class OrderDaoImpl implements OrderDao {
                 preparedStmt.setDouble(6, (tempOrder.getUnitPrice()) * (tempOrder.getQty()));
                 preparedStmt.executeUpdate();
                 preparedStmt.close();
-               
+
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-             return "SAVE";
+            return tempOrder.getItem()+" with "+tempOrder.getQty()+" quantity is added";
 
         } else {
             try {
@@ -82,14 +82,14 @@ public class OrderDaoImpl implements OrderDao {
                 preparedStmt.setDouble(3, tempOrder.getUnitPrice());
                 preparedStmt.setInt(4, tempOrder.getQty());
                 preparedStmt.setDouble(5, (tempOrder.getUnitPrice()) * (tempOrder.getQty()));
-                preparedStmt.setInt(7, tempOrder.getId());
+                preparedStmt.setInt(6, tempOrder.getId());
                 preparedStmt.executeUpdate();
                 preparedStmt.close();
-            
+
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return "UPDATE";
+            return tempOrder.getItem()+" with "+tempOrder.getQty()+" quantity is updated";
         }
     }
 
@@ -120,12 +120,35 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public boolean deleteAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Connection conn = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            String query = "delete from temp_order";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.executeUpdate();
+            preparedStmt.close();
+
+        } catch (Exception e) {
+            System.out.println("error:" + e.getMessage());
+        }
+        return true;
     }
 
     @Override
-    public boolean deleteById(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deleteById(int id) {
+        Connection conn = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            String query = "delete from temp_order where id=?";
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setInt(1, id);
+            preparedStmt.executeUpdate();
+            preparedStmt.close();
+
+        } catch (Exception e) {
+            System.out.println("error:" + e.getMessage());
+        }
+        return true;
     }
 
     @Override

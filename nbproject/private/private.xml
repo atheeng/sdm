@@ -3,16 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/onlineShopping/sdm-master/src/com/dto/ProductModelTable.java</file>
-            <file>file:/D:/onlineShopping/sdm-master/src/com/dto/UserModelTable.java</file>
+            <file>file:/D:/onlineShopping/sdm-master/src/com/model/TempOrder.java</file>
+            <file>file:/D:/onlineShopping/sdm-master/src/com/dao/daoImpl/OrderDaoImpl.java</file>
             <file>file:/D:/onlineShopping/sdm-master/src/com/dao/UserDao.java</file>
-            <file>file:/D:/onlineShopping/sdm-master/src/com/model/User.java</file>
-            <file>file:/D:/onlineShopping/sdm-master/src/com/model/Product.java</file>
             <file>file:/D:/onlineShopping/sdm-master/src/com/dashboard/Dashboard.java</file>
-            <file>file:/D:/onlineShopping/sdm-master/src/com/dao/daoImpl/ProductDaoImpl.java</file>
-            <file>file:/D:/onlineShopping/sdm-master/src/com/dao/ProductDao.java</file>
-            <file>file:/D:/onlineShopping/sdm-master/src/view/LoginForm.java</file>
+            <file>file:/D:/onlineShopping/sdm-master/src/com/db/DataBaseConnection.java</file>
             <file>file:/D:/onlineShopping/sdm-master/src/com/dao/daoImpl/UserDaoImpl.java</file>
+            <file>file:/D:/onlineShopping/sdm-master/src/com/dao/OrderDao.java</file>
         </group>
     </open-files>
 </project-private>

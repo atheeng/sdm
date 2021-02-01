@@ -17,7 +17,7 @@ public interface OrderDao {
    String saveUpdate(TempOrder order);
    boolean existingItem(String item);
    boolean deleteAll();
-   boolean deleteById(String id);
+   boolean deleteById(int id);
    List<TempOrder> getAllTempList();
     
 }

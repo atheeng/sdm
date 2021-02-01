@@ -11,6 +11,22 @@ package com.model;
  */
 public class TempOrder {
 
+    int id;
+    int productId;
+    String item;
+    double unitPrice;
+    int qty;
+    double totalPrice; 
+    int totalQty;
+
+    public int getTotalQty() {
+        return totalQty;
+    }
+
+    public void setTotalQty(int totalQty) {
+        this.totalQty = totalQty;
+    }
+
     public int getId() {
         return id;
     }
@@ -50,12 +66,6 @@ public class TempOrder {
     public void setQty(int qty) {
         this.qty = qty;
     }
-    int id;
-    int productId;
-    String item;
-    double unitPrice;
-    int qty;
-    double totalPrice;
 
     public double getTotalPrice() {
         return totalPrice;
@@ -64,5 +74,5 @@ public class TempOrder {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
-    
+
 }
