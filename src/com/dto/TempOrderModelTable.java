@@ -5,27 +5,28 @@
  */
 package com.dto;
 
-import com.model.Product;
+import com.model.TempOrder;
+import com.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author salinthapa
+ * @author Arun Tamang
  */
-public class ProductModelTable extends AbstractTableModel{
-    List<Product> productList = new ArrayList<>();
+public class TempOrderModelTable extends AbstractTableModel{
+    List<TempOrder> tempOrders = new ArrayList<>();
 
     private final String[] columnNames = new String[]{
-        "Id", "Product name","type", "price", "Total QTY","Description"
+        "order Id", "product Id","Item", "Qty","Unit Rate", "Total Price",
     };
     private final Class[] columnClass = new Class[]{
-        Integer.class, String.class, String.class , String.class, String.class,String.class
+        Integer.class, String.class, String.class , String.class, String.class,String.class, String.class
     };
 
-    public ProductModelTable(List<Product> productList) {
-        this.productList = productList;
+    public TempOrderModelTable(List<TempOrder> tempOrders) {
+        this.tempOrders = tempOrders;
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ProductModelTable extends AbstractTableModel{
     @Override
     public int getRowCount()
     {
-        return productList.size();
+        return tempOrders.size();
     }
     @Override
     public int getColumnCount() {
@@ -51,24 +52,24 @@ public class ProductModelTable extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Product row = productList.get(rowIndex);
+        TempOrder row = tempOrders.get(rowIndex);
         if(0 == columnIndex) {
             return row.getId();
         }
         else if(1 == columnIndex) {
-            return row.getProductName();
+            return row.getProductId();
         }
         else if(2 == columnIndex) {
-             return row.getProductType();
+             return row.getItem();
         }
         else if(3 == columnIndex) {
-            return row.getPrice();
+            return row.getQty();
         }
         else if(4 == columnIndex) {
-            return row.getTotalQty();
+            return row.getUnitPrice();
         }
-        else if(5 == columnIndex) {
-            return row.getDescription();
+         else if(5 == columnIndex) {
+            return row.getQty()*row.getUnitPrice();
         }
         return null;
     }

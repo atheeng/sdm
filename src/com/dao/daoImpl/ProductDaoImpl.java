@@ -26,15 +26,14 @@ public class ProductDaoImpl implements ProductDao {
             } else {
                 try {
                     conn = DataBaseConnection.getInstance().getConnection();
-                    String query = "INSERT INTO product(product_name,product_type,price,total_quantity,available_quantity,description,created_date) VALUES (?,?,?,?,?,?,?)";
+                    String query = "INSERT INTO product(product_name,product_type,price,total_quantity,description,created_date) VALUES (?,?,?,?,?,?,?)";
                     PreparedStatement preparedStmt = conn.prepareStatement(query);
                     preparedStmt.setString(1, product.getProductName().toUpperCase());
                     preparedStmt.setString(2, product.getProductType());
                     preparedStmt.setDouble(3, product.getPrice());
                     preparedStmt.setInt(4, product.getTotalQty());
-                    preparedStmt.setInt(5, product.getAvailableQty());
-                    preparedStmt.setString(6, product.getDescription());
-                    preparedStmt.setDate(7, date);
+                    preparedStmt.setString(5, product.getDescription());
+                    preparedStmt.setDate(6, date);
                     preparedStmt.executeUpdate();
                     preparedStmt.close();
                     System.out.println("saved");
@@ -73,7 +72,7 @@ public class ProductDaoImpl implements ProductDao {
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,available_quantity,description FROM product");
+            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product");
             while (rs.next()) {
                 Product product = new Product();
                 product.setId(rs.getInt(1));
@@ -81,8 +80,7 @@ public class ProductDaoImpl implements ProductDao {
                 product.setProductType(rs.getString(3));
                 product.setPrice(rs.getDouble(4));
                 product.setTotalQty(rs.getInt(5));
-                product.setAvailableQty(rs.getInt(6));
-                product.setDescription(rs.getString(7));
+                product.setDescription(rs.getString(6));
                 productList.add(product);
             }
             rs.close();
@@ -115,7 +113,7 @@ public class ProductDaoImpl implements ProductDao {
         Product product = new Product();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "select id,product_name,product_type,price,total_quantity,available_quantity,description FROM product where id=? ";
+            String query = "select id,product_name,product_type,price,total_quantity,description FROM product where id=? ";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setInt(1, productId);
             ResultSet rs = preparedStmt.executeQuery();
@@ -125,8 +123,7 @@ public class ProductDaoImpl implements ProductDao {
                 product.setProductType(rs.getString(3));
                 product.setPrice(rs.getDouble(4));
                 product.setTotalQty(rs.getInt(5));
-                product.setAvailableQty(rs.getInt(6));
-                product.setDescription(rs.getString(7));
+                product.setDescription(rs.getString(6));
             }
             rs.close();
             preparedStmt.close();
@@ -160,6 +157,52 @@ public class ProductDaoImpl implements ProductDao {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<Product> getAllProductSearch(String name, String type) {
+        List<Product> productList = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product where product_name like '"+name+"%' and product_type like '"+type+"%' ");
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt(1));
+                product.setProductName(rs.getString(2));
+                product.setProductType(rs.getString(3));
+                product.setPrice(rs.getDouble(4));
+                product.setTotalQty(rs.getInt(5));
+                product.setDescription(rs.getString(6));
+                productList.add(product);
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return productList;
+    }
+
+    @Override
+    public List<String> getProductItem() {
+        List<String> productList = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product");
+            while (rs.next()) {
+                String finalItem=String.valueOf(rs.getInt(1))+"-"+rs.getString(2)+"("+rs.getString(3)+")";
+                productList.add(finalItem);
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return productList;
     }
 
 }
