@@ -1097,7 +1097,7 @@
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="jScrollPane5" min="-2" pref="891" max="-2" attributes="0"/>
-                              <Component id="jButton1" min="-2" pref="148" max="-2" attributes="0"/>
+                              <Component id="txt_purchase" min="-2" pref="148" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="73" max="32767" attributes="0"/>
                       </Group>
@@ -1137,7 +1137,7 @@
                               <Component id="txt_grand_total" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="16" max="32767" attributes="0"/>
-                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                          <Component id="txt_purchase" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -1207,7 +1207,7 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JButton" name="jButton1">
+                <Component class="javax.swing.JButton" name="txt_purchase">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Tahoma" size="11" style="1"/>
@@ -1217,6 +1217,9 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="PURCHASE"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_purchaseActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel5">
                   <Properties>

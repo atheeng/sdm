@@ -96,7 +96,7 @@ public class Dashboard extends javax.swing.JFrame {
         for (TempOrder t : list) {
             grandTotal += t.getTotalPrice();
         }
-        int listSize=list.size();
+        int listSize = list.size();
         txt_nos_items.setText(String.valueOf(listSize));
         txt_grand_total.setText(String.valueOf(grandTotal));
         txt_nos_items.setEditable(false);
@@ -212,7 +212,7 @@ public class Dashboard extends javax.swing.JFrame {
         product_search_panel2 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         temp_order_table = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        txt_purchase = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txt_nos_items = new javax.swing.JTextField();
@@ -868,9 +868,14 @@ public class Dashboard extends javax.swing.JFrame {
         });
         jScrollPane5.setViewportView(temp_order_table);
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 0, 255));
-        jButton1.setText("PURCHASE");
+        txt_purchase.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        txt_purchase.setForeground(new java.awt.Color(0, 0, 255));
+        txt_purchase.setText("PURCHASE");
+        txt_purchase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_purchaseActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setText("number of items:");
@@ -890,7 +895,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 891, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_purchase, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(73, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, product_search_panel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -920,7 +925,7 @@ public class Dashboard extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(txt_grand_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(txt_purchase)
                 .addGap(33, 33, 33))
         );
 
@@ -1281,12 +1286,16 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_reset_orderActionPerformed
 
     private void order_add_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_order_add_updateActionPerformed
-
         String item = txt_order_items.getSelectedItem().toString();
         ProductDao pd = new ProductDaoImpl();
         String id[] = item.split("-");
+        if(txt_order_available_qty.getText().isEmpty()){
+           JOptionPane.showMessageDialog(null, "Please Select Item "+txt_order_available_qty.getText(), "Warning", JOptionPane.WARNING_MESSAGE); 
+           return;
+        }
         int availableQty = Integer.parseInt(txt_order_available_qty.getText());
         double unitPrice = Double.parseDouble(txt_order_price.getText());
+        System.out.println("unit" + unitPrice);
         Integer qty = null;
         try {
             if (txt_order_required_qty.getText().trim().length() == 0) {
@@ -1308,6 +1317,7 @@ public class Dashboard extends javax.swing.JFrame {
         TempOrder tempOrder = new TempOrder();
         tempOrder.setProductId(Integer.parseInt(id[0]));
         tempOrder.setItem(item);
+        tempOrder.setUserId(user.getId());
         tempOrder.setId(txt_temp_order_id);
         tempOrder.setTotalQty(availableQty);
         tempOrder.setUnitPrice(unitPrice);
@@ -1355,8 +1365,13 @@ public class Dashboard extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, "successfully deleted", "Success", JOptionPane.WARNING_MESSAGE);
         resetOrderForm();
         loadTableTempOrder();
-        txt_temp_order_id=0;
+        txt_temp_order_id = 0;
     }//GEN-LAST:event_order_deleteActionPerformed
+
+    private void txt_purchaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_purchaseActionPerformed
+        OrderDao od=new OrderDaoImpl();
+       List<TempOrder>  list=od.getAllTempList();
+    }//GEN-LAST:event_txt_purchaseActionPerformed
 
     public static void main(String args[]) {
 
@@ -1373,7 +1388,6 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JPanel customer_panel;
     private javax.swing.JButton customer_search;
     private javax.swing.JTable customer_table;
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;
@@ -1440,6 +1454,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTextField txt_product_quantity;
     private javax.swing.JTextField txt_product_search_name;
     private javax.swing.JTextField txt_product_search_type;
+    private javax.swing.JButton txt_purchase;
     private javax.swing.JTextField txt_user_address;
     private javax.swing.JTextField txt_user_first_name;
     private javax.swing.JTextField txt_user_last_name;

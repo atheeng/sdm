@@ -70,7 +70,7 @@ public class OrderDaoImpl implements OrderDao {
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return tempOrder.getItem()+" with "+tempOrder.getQty()+" quantity is added";
+            return tempOrder.getItem() + " with " + tempOrder.getQty() + " quantity is added";
 
         } else {
             try {
@@ -89,7 +89,7 @@ public class OrderDaoImpl implements OrderDao {
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return tempOrder.getItem()+" with "+tempOrder.getQty()+" quantity is updated";
+            return tempOrder.getItem() + " with " + tempOrder.getQty() + " quantity is updated";
         }
     }
 
@@ -175,6 +175,31 @@ public class OrderDaoImpl implements OrderDao {
             System.out.println(e.getMessage());
         }
         return productList;
+    }
+
+    @Override
+    public String purchase(List<TempOrder> list) {
+        Connection conn = null;
+        for (TempOrder purchase : list) {
+//            try {
+//                conn = DataBaseConnection.getInstance().getConnection();
+//                String query = "INSERT INTO temp_order VALUES(?,?,?,?,?,?)";
+//                PreparedStatement preparedStmt = conn.prepareStatement(query);
+//                preparedStmt.setInt(1, purchase.);
+//                preparedStmt.setString(3, tempOrder.getItem());
+//                preparedStmt.setDouble(4, tempOrder.getUnitPrice());
+//                preparedStmt.setInt(5, tempOrder.getQty());
+//                preparedStmt.setDouble(6, (tempOrder.getUnitPrice()) * (tempOrder.getQty()));
+//                preparedStmt.executeUpdate();
+//                preparedStmt.close();
+//
+//            } catch (Exception e) {
+//                System.out.println("error:" + e.getMessage());
+//            }
+        }
+
+//        return tempOrder.getItem() + " with " + tempOrder.getQty() + " quantity is added";
+        return "";
     }
 
 }

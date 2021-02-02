@@ -18,6 +18,15 @@ public class TempOrder {
     int qty;
     double totalPrice; 
     int totalQty;
+    int userId;
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
     public int getTotalQty() {
         return totalQty;

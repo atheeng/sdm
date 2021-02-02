@@ -19,5 +19,6 @@ public interface OrderDao {
    boolean deleteAll();
    boolean deleteById(int id);
    List<TempOrder> getAllTempList();
+   String purchase(List<TempOrder> list);
     
 }
