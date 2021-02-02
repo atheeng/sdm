@@ -26,7 +26,7 @@ public class ProductDaoImpl implements ProductDao {
             } else {
                 try {
                     conn = DataBaseConnection.getInstance().getConnection();
-                    String query = "INSERT INTO product(product_name,product_type,price,total_quantity,description,created_date) VALUES (?,?,?,?,?,?,?)";
+                    String query = "INSERT INTO product(product_name,product_type,price,total_quantity,description,created_date) VALUES (?,?,?,?,?,?)";
                     PreparedStatement preparedStmt = conn.prepareStatement(query);
                     preparedStmt.setString(1, product.getProductName().toUpperCase());
                     preparedStmt.setString(2, product.getProductType());
@@ -36,7 +36,6 @@ public class ProductDaoImpl implements ProductDao {
                     preparedStmt.setDate(6, date);
                     preparedStmt.executeUpdate();
                     preparedStmt.close();
-                    System.out.println("saved");
                 } catch (Exception e) {
                     System.out.println("error:" + e.getMessage());
                 }

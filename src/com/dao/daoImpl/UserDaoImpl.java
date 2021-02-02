@@ -5,7 +5,7 @@
  */
 package com.dao.daoImpl;
 
-import com.Enum.RoleType;
+import com.Enum.RoleTypeEnum;
 import com.dao.UserDao;
 import com.db.DataBaseConnection;
 import com.model.User;
@@ -37,7 +37,7 @@ public class UserDaoImpl implements UserDao {
                 User u = new User();
                 u.setId(rs.getInt(1));
                 u.setUsername(rs.getString(2));
-                u.setRole(RoleType.valueOf(rs.getString(4)));
+                u.setRole(RoleTypeEnum.valueOf(rs.getString(4)));
                 u.setFirstName(rs.getString(5));
                 u.setLastName(rs.getString(6));
                 u.setAddress(rs.getString(7));
@@ -109,7 +109,7 @@ public class UserDaoImpl implements UserDao {
                 user.setId(rs.getInt(1));
                 user.setUsername(rs.getString(2));
                 user.setPassword(rs.getString(3));
-                user.setRole(RoleType.valueOf(rs.getString(4)));
+                user.setRole(RoleTypeEnum.valueOf(rs.getString(4)));
                 user.setFirstName(rs.getString(5));
                 user.setLastName(rs.getString(6));
                 user.setAddress(rs.getString(7));
@@ -143,7 +143,7 @@ public class UserDaoImpl implements UserDao {
             while (rs.next()) {
                 user.setId(rs.getInt(1));
                 user.setUsername(rs.getString(2));
-                user.setRole(RoleType.valueOf(rs.getString(3)));
+                user.setRole(RoleTypeEnum.valueOf(rs.getString(3)));
             }
             rs.close();
             preparedStmt.close();
@@ -222,7 +222,7 @@ public class UserDaoImpl implements UserDao {
                 User u = new User();
                 u.setId(rs.getInt(1));
                 u.setUsername(rs.getString(2));
-                u.setRole(RoleType.valueOf(rs.getString(4)));
+                u.setRole(RoleTypeEnum.valueOf(rs.getString(4)));
                 u.setFirstName(rs.getString(5));
                 u.setLastName(rs.getString(6));
                 u.setAddress(rs.getString(7));

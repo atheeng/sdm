@@ -1,7 +1,7 @@
 package view;
 
 import com.dao.daoImpl.UserDaoImpl;
-import com.Enum.RoleType;
+import com.Enum.RoleTypeEnum;
 import com.dao.UserDao;
 import com.dashboard.Dashboard;
 import com.db.DataBaseConnection;
@@ -301,7 +301,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         String userName = txt_first_name.getText();
         String password = txt_password.getText();
         String roles = cb_role.getSelectedItem().toString();
-        RoleType roleText = RoleType.valueOf(roles);
+        RoleTypeEnum roleText = RoleTypeEnum.valueOf(roles);
         String firstName = txt_first_name.getText();
         String lastName = txt_last_name.getText();
         String address = txt_address.getText();
@@ -334,7 +334,7 @@ public class CustomerFrame extends javax.swing.JFrame {
         String userName = txt_first_name.getText();
         String password = txt_password.getText();
         String roles = cb_role.getSelectedItem().toString();
-        RoleType roleText = RoleType.valueOf(roles);
+        RoleTypeEnum roleText = RoleTypeEnum.valueOf(roles);
         String firstName = txt_first_name.getText();
         String lastName = txt_last_name.getText();
         String address = txt_address.getText();

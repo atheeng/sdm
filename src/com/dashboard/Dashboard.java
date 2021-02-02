@@ -1,7 +1,7 @@
 package com.dashboard;
 
 import com.dao.daoImpl.UserDaoImpl;
-import com.Enum.RoleType;
+import com.Enum.RoleTypeEnum;
 import com.dao.OrderDao;
 import com.dao.ProductDao;
 import com.dao.UserDao;
@@ -144,7 +144,7 @@ public class Dashboard extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
-        orderTab = new javax.swing.JTabbedPane();
+        menuTab = new javax.swing.JTabbedPane();
         customer_panel = new javax.swing.JPanel();
         user_password = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
@@ -217,6 +217,7 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         txt_nos_items = new javax.swing.JTextField();
         txt_grand_total = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         label_user = new javax.swing.JLabel();
@@ -497,7 +498,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(0, 245, Short.MAX_VALUE))
         );
 
-        orderTab.addTab("Customer", customer_panel);
+        menuTab.addTab("Customer", customer_panel);
 
         productPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -721,7 +722,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap(224, Short.MAX_VALUE))
         );
 
-        orderTab.addTab("Product", productPanel);
+        menuTab.addTab("Product", productPanel);
 
         user_password1.setBorder(javax.swing.BorderFactory.createTitledBorder("Order Form"));
 
@@ -763,6 +764,12 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
+        txt_order_items.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Item" }));
+        txt_order_items.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                txt_order_itemsItemStateChanged(evt);
+            }
+        });
         txt_order_items.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txt_order_itemsMouseClicked(evt);
@@ -952,7 +959,20 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap(207, Short.MAX_VALUE))
         );
 
-        orderTab.addTab("Order", jPanel3);
+        menuTab.addTab("Order", jPanel3);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1367, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 624, Short.MAX_VALUE)
+        );
+
+        menuTab.addTab("OrderList", jPanel2);
 
         jPanel1.setBackground(new java.awt.Color(153, 255, 255));
 
@@ -1000,7 +1020,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(orderTab, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(menuTab, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -1009,7 +1029,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(orderTab, javax.swing.GroupLayout.PREFERRED_SIZE, 652, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(menuTab, javax.swing.GroupLayout.PREFERRED_SIZE, 652, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1072,7 +1092,7 @@ public class Dashboard extends javax.swing.JFrame {
         String roles = cb_user_role.getSelectedItem().toString();
         String address = txt_user_address.getText().trim();
         String mobileNo = txt_user_mobile_no.getText().trim();
-        RoleType roleText = null;
+        RoleTypeEnum roleText = null;
         if (firstName.length() == 0) {
             JOptionPane.showMessageDialog(null, "first name is required", "Warning", JOptionPane.WARNING_MESSAGE);
         } else if (lastName.length() == 0) {
@@ -1088,7 +1108,7 @@ public class Dashboard extends javax.swing.JFrame {
         } else if (mobileNo.length() == 0) {
             JOptionPane.showMessageDialog(null, "mobile no is required", "Warning", JOptionPane.WARNING_MESSAGE);
         }
-        roleText = RoleType.valueOf(roles);
+        roleText = RoleTypeEnum.valueOf(roles);
         UserDao userDao = new UserDaoImpl();
         User user;
         if (userId == 0) {
@@ -1110,6 +1130,7 @@ public class Dashboard extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, result, "Success", JOptionPane.WARNING_MESSAGE);
         txt_user_username.setEditable(true);
         loadTableCustomer();
+        productItemList();
     }//GEN-LAST:event_user_save_updateActionPerformed
 
     private void user_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_user_resetActionPerformed
@@ -1272,12 +1293,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_reloadProductTableActionPerformed
 
     private void txt_order_itemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_itemsActionPerformed
-        String item = txt_order_items.getSelectedItem().toString();
-        ProductDao pd = new ProductDaoImpl();
-        String id[] = item.split("-");
-        Product product = pd.getById(Integer.parseInt(id[0]));
-        txt_order_price.setText(String.valueOf(product.getPrice()));
-        txt_order_available_qty.setText(String.valueOf(product.getTotalQty()));
+
     }//GEN-LAST:event_txt_order_itemsActionPerformed
 
     private void reset_orderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_orderActionPerformed
@@ -1289,9 +1305,9 @@ public class Dashboard extends javax.swing.JFrame {
         String item = txt_order_items.getSelectedItem().toString();
         ProductDao pd = new ProductDaoImpl();
         String id[] = item.split("-");
-        if(txt_order_available_qty.getText().isEmpty()){
-           JOptionPane.showMessageDialog(null, "Please Select Item "+txt_order_available_qty.getText(), "Warning", JOptionPane.WARNING_MESSAGE); 
-           return;
+        if (txt_order_available_qty.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please Select Item " + txt_order_available_qty.getText(), "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
         }
         int availableQty = Integer.parseInt(txt_order_available_qty.getText());
         double unitPrice = Double.parseDouble(txt_order_price.getText());
@@ -1370,8 +1386,26 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void txt_purchaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_purchaseActionPerformed
         OrderDao od=new OrderDaoImpl();
-       List<TempOrder>  list=od.getAllTempList();
+        List<TempOrder> list = od.getAllTempList();
+        OrderDao ods=new OrderDaoImpl();
+        String status=ods.purchase(list);
+        deleteAllTempOrderList();
+        loadTableTempOrder();
+        JOptionPane.showMessageDialog(null, "purchase order done", "Success", JOptionPane.WARNING_MESSAGE);
+        
     }//GEN-LAST:event_txt_purchaseActionPerformed
+
+    private void txt_order_itemsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_txt_order_itemsItemStateChanged
+        if(txt_order_items.getSelectedItem().toString()=="Select Item"){
+            return;
+        }
+        String item = txt_order_items.getSelectedItem().toString();
+        ProductDao pd = new ProductDaoImpl();
+        String id[] = item.split("-");
+        Product product = pd.getById(Integer.parseInt(id[0]));
+        txt_order_price.setText(String.valueOf(product.getPrice()));
+        txt_order_available_qty.setText(String.valueOf(product.getTotalQty()));
+    }//GEN-LAST:event_txt_order_itemsItemStateChanged
 
     public static void main(String args[]) {
 
@@ -1415,6 +1449,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane2;
@@ -1426,7 +1461,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField3;
     private javax.swing.JLabel label_user;
     private javax.swing.JButton logout;
-    private javax.swing.JTabbedPane orderTab;
+    private javax.swing.JTabbedPane menuTab;
     private javax.swing.JButton order_add_update;
     private javax.swing.JButton order_delete;
     private javax.swing.JPanel productPanel;

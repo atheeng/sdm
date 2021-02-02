@@ -1,6 +1,6 @@
 package com.model;
 
-import com.Enum.RoleType;
+import com.Enum.RoleTypeEnum;
 
 public class User {
 
@@ -11,7 +11,7 @@ public class User {
 
     private String username;
     private String password;
-    private RoleType role;
+    private RoleTypeEnum role;
     private String firstName;
     private String lastName;
     private String mobileNo;
@@ -43,11 +43,11 @@ public class User {
         this.password = password;
     }
 
-    public RoleType getRole() {
+    public RoleTypeEnum getRole() {
         return role;
     }
 
-    public void setRole(RoleType role) {
+    public void setRole(RoleTypeEnum role) {
         this.role = role;
     }
 
@@ -83,7 +83,7 @@ public class User {
         this.address = address;
     }
 
-    public User(String username, String password, RoleType role, String firstName, String lastName, String mobileNo, String address) {
+    public User(String username, String password, RoleTypeEnum role, String firstName, String lastName, String mobileNo, String address) {
         this.username = username;
         this.password = password;
         this.role = role;
