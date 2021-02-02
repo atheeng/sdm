@@ -5,7 +5,7 @@
  */
 package com.dto;
 
-import com.model.TempOrder;
+import com.model.CartOrder;
 import com.model.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import javax.swing.table.AbstractTableModel;
  * @author Arun Tamang
  */
 public class TempOrderModelTable extends AbstractTableModel{
-    List<TempOrder> tempOrders = new ArrayList<>();
+    List<CartOrder> tempOrders = new ArrayList<>();
 
     private final String[] columnNames = new String[]{
         "order Id", "product Id","Item", "Qty","Unit Rate", "Total Price",
@@ -25,7 +25,7 @@ public class TempOrderModelTable extends AbstractTableModel{
         Integer.class, String.class, String.class , String.class, String.class,String.class, String.class
     };
 
-    public TempOrderModelTable(List<TempOrder> tempOrders) {
+    public TempOrderModelTable(List<CartOrder> tempOrders) {
         this.tempOrders = tempOrders;
     }
 
@@ -52,7 +52,7 @@ public class TempOrderModelTable extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        TempOrder row = tempOrders.get(rowIndex);
+        CartOrder row = tempOrders.get(rowIndex);
         if(0 == columnIndex) {
             return row.getId();
         }

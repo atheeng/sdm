@@ -8,7 +8,7 @@ package com.dao.daoImpl;
 import com.Enum.StatusEnum;
 import com.dao.OrderDao;
 import com.db.DataBaseConnection;
-import com.model.TempOrder;
+import com.model.CartOrder;
 import com.util.ProductReserve;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,7 +30,7 @@ public class OrderDaoImpl implements OrderDao {
     java.sql.Date date = new java.sql.Date(millis);
 
     @Override
-    public String saveUpdate(TempOrder tempOrder) {
+    public String saveUpdate(CartOrder tempOrder) {
         long millis = System.currentTimeMillis();
         java.sql.Date date = new java.sql.Date(millis);
         int id = 0;
@@ -155,14 +155,14 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<TempOrder> getAllTempList() {
-        List<TempOrder> productList = new ArrayList<>();
+    public List<CartOrder> getAllTempList() {
+        List<CartOrder> productList = new ArrayList<>();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("SELECT id,product_id,item,unit_price,quantity,totalAmount FROM temp_order");
             while (rs.next()) {
-                TempOrder product = new TempOrder();
+                CartOrder product = new CartOrder();
                 product.setId(rs.getInt(1));
                 product.setProductId(rs.getInt(2));
                 product.setItem(rs.getString(3));
@@ -180,14 +180,14 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public String purchase(List<TempOrder> list) {
+    public String purchase(List<CartOrder> list) {
 //        for orderno;
         String id = null;
         String date = null;
         int userId = list.get(0).getUserId();
         int itemNo = list.size();
         Double totalAmount = 0.00;
-        for (TempOrder t : list) {
+        for (CartOrder t : list) {
             totalAmount += t.getTotalQty();
         }
         try {
@@ -224,7 +224,7 @@ public class OrderDaoImpl implements OrderDao {
             System.out.println("error add orders :" + e.getMessage());
         }
         //orderItem
-        for (TempOrder tem : list) {
+        for (CartOrder tem : list) {
             try {
                 Connection conn = null;
                 conn = DataBaseConnection.getInstance().getConnection();
@@ -239,7 +239,7 @@ public class OrderDaoImpl implements OrderDao {
             }
         }
         //update item quantity
-        for (TempOrder tem : list) {
+        for (CartOrder tem : list) {
             int quantity = 0;
             try {
                 conn = DataBaseConnection.getInstance().getConnection();

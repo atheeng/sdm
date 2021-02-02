@@ -191,7 +191,7 @@ public class ProductDaoImpl implements ProductDao {
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product");
+            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product where total_quantity >0");
             while (rs.next()) {
                 String finalItem=String.valueOf(rs.getInt(1))+"-"+rs.getString(2)+"("+rs.getString(3)+")";
                 productList.add(finalItem);

@@ -11,7 +11,7 @@ import com.dto.ProductModelTable;
 import com.dto.TempOrderModelTable;
 import com.dto.UserModelTable;
 import com.model.Product;
-import com.model.TempOrder;
+import com.model.CartOrder;
 import com.model.User;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,11 +62,12 @@ public class Dashboard extends javax.swing.JFrame {
 
     public void productItemList() {
         ProductDao pd = new ProductDaoImpl();
-        List<String> list = pd.getProductItem();
-        for (String l : list) {
+        List<String> list=pd.getProductItem();       
+                for (String l : list) {
             System.out.println(l);
             txt_order_items.addItem(l);
         }
+        
         txt_order_price.setEnabled(false);
         txt_order_available_qty.setEditable(false);
 
@@ -89,11 +90,11 @@ public class Dashboard extends javax.swing.JFrame {
 
     public void loadTableTempOrder() {
         OrderDao od = new OrderDaoImpl();
-        List<TempOrder> list = od.getAllTempList();
+        List<CartOrder> list = od.getAllTempList();
         TempOrderModelTable model = new TempOrderModelTable(list);
         temp_order_table.setModel(model);
         double grandTotal = 0.00;
-        for (TempOrder t : list) {
+        for (CartOrder t : list) {
             grandTotal += t.getTotalPrice();
         }
         int listSize = list.size();
@@ -850,7 +851,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        product_search_panel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Order Details"));
+        product_search_panel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cart Details"));
 
         temp_order_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1232,6 +1233,7 @@ public class Dashboard extends javax.swing.JFrame {
         txt_product_name.setEditable(true);
         cb_product_type.setEnabled(true);
         loadTableProduct();
+        productItemList();
 
     }//GEN-LAST:event_product_save_updateActionPerformed
 
@@ -1310,6 +1312,13 @@ public class Dashboard extends javax.swing.JFrame {
             return;
         }
         int availableQty = Integer.parseInt(txt_order_available_qty.getText());
+        if(availableQty==0){
+            txt_order_required_qty.setEnabled(false);
+            order_add_update.setEnabled(false);
+        }else{
+            txt_order_required_qty.setEnabled(true);
+            order_add_update.setEnabled(true);
+        }
         double unitPrice = Double.parseDouble(txt_order_price.getText());
         System.out.println("unit" + unitPrice);
         Integer qty = null;
@@ -1330,7 +1339,7 @@ public class Dashboard extends javax.swing.JFrame {
             return;
         }
 
-        TempOrder tempOrder = new TempOrder();
+        CartOrder tempOrder = new CartOrder();
         tempOrder.setProductId(Integer.parseInt(id[0]));
         tempOrder.setItem(item);
         tempOrder.setUserId(user.getId());
@@ -1386,13 +1395,13 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void txt_purchaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_purchaseActionPerformed
         OrderDao od=new OrderDaoImpl();
-        List<TempOrder> list = od.getAllTempList();
+        List<CartOrder> list = od.getAllTempList();
         OrderDao ods=new OrderDaoImpl();
         String status=ods.purchase(list);
         deleteAllTempOrderList();
         loadTableTempOrder();
-        JOptionPane.showMessageDialog(null, "purchase order done", "Success", JOptionPane.WARNING_MESSAGE);
-        
+        loadTableProduct();
+        JOptionPane.showMessageDialog(null, "purchase order done", "Success", JOptionPane.WARNING_MESSAGE);        
     }//GEN-LAST:event_txt_purchaseActionPerformed
 
     private void txt_order_itemsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_txt_order_itemsItemStateChanged
@@ -1405,6 +1414,13 @@ public class Dashboard extends javax.swing.JFrame {
         Product product = pd.getById(Integer.parseInt(id[0]));
         txt_order_price.setText(String.valueOf(product.getPrice()));
         txt_order_available_qty.setText(String.valueOf(product.getTotalQty()));
+           if(product.getTotalQty()==0){
+            txt_order_required_qty.setEnabled(false);
+            order_add_update.setEnabled(false);
+        }else{
+            txt_order_required_qty.setEnabled(true);
+            order_add_update.setEnabled(true);
+        }
     }//GEN-LAST:event_txt_order_itemsItemStateChanged
 
     public static void main(String args[]) {
