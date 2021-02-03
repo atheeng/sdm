@@ -9,7 +9,16 @@ public class OrderListDto {
     int ItemNo;
     double totalAmt;
     String orderDate;
-    String oderBy;
+    String orderBy;
+    String action;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public String getOrderNo() {
         return orderNo;
@@ -43,12 +52,12 @@ public class OrderListDto {
         this.orderDate = orderDate;
     }
 
-    public String getOderBy() {
-        return oderBy;
+    public String getOrderBy() {
+        return orderBy;
     }
 
-    public void setOderBy(String oderBy) {
-        this.oderBy = oderBy;
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
     }
     
 }

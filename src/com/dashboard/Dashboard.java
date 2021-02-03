@@ -7,22 +7,29 @@ import com.dao.ProductDao;
 import com.dao.UserDao;
 import com.dao.daoImpl.OrderDaoImpl;
 import com.dao.daoImpl.ProductDaoImpl;
+import com.dto.OrderListDto;
+import com.dto.OrderModelTable;
 import com.dto.ProductModelTable;
 import com.dto.TempOrderModelTable;
 import com.dto.UserModelTable;
 import com.model.Product;
-import com.model.CartOrder;
+import com.model.Cart;
 import com.model.User;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import view.CustomerFrame;
 import view.LoginForm;
+import view.OrderViewFrame;
 import view.ProductFrame;
 
 public class Dashboard extends javax.swing.JFrame {
@@ -45,10 +52,25 @@ public class Dashboard extends javax.swing.JFrame {
         txt_grand_total.setText("0.00");
         txt_nos_items.setEditable(false);
         txt_grand_total.setEditable(false);
-        loadTableCustomer();
-        loadTableProduct();
-        productItemList();
-        deleteAllTempOrderList();
+        menuTab.setSelectedIndex(0);
+
+        int selectedMenu = menuTab.getSelectedIndex();
+        String MenuName = menuTab.getTitleAt(selectedMenu);
+        System.out.println("Tab Value:" + MenuName);
+        switch (MenuName.toUpperCase()) {
+            case "CUSTOMER":
+                loadTableCustomer();
+                break;
+            case "PRODUCT":
+                loadTableProduct();
+                break;
+            case "ORDER":
+                productItemList();
+                break;
+            case "ORDERLIST":
+                loadOrderListTable();
+                break;
+        }
 
         if (user.getRole().toString() == "USER") {
 
@@ -62,12 +84,11 @@ public class Dashboard extends javax.swing.JFrame {
 
     public void productItemList() {
         ProductDao pd = new ProductDaoImpl();
-        List<String> list=pd.getProductItem();       
-                for (String l : list) {
-            System.out.println(l);
+        List<String> list = pd.getProductItem();
+        for (String l : list) {
             txt_order_items.addItem(l);
         }
-        
+
         txt_order_price.setEnabled(false);
         txt_order_available_qty.setEditable(false);
 
@@ -83,18 +104,18 @@ public class Dashboard extends javax.swing.JFrame {
     public void loadTableProduct() {
         ProductDao pd = new ProductDaoImpl();
         List<Product> list = pd.getAllProduct();
-        System.out.println("list" + list.size());
+        System.out.println("list product:" + list.size());
         ProductModelTable model = new ProductModelTable(list);
         product_table.setModel(model);
     }
 
     public void loadTableTempOrder() {
         OrderDao od = new OrderDaoImpl();
-        List<CartOrder> list = od.getAllTempList();
+        List<Cart> list = od.getAllTempList();
         TempOrderModelTable model = new TempOrderModelTable(list);
         temp_order_table.setModel(model);
         double grandTotal = 0.00;
-        for (CartOrder t : list) {
+        for (Cart t : list) {
             grandTotal += t.getTotalPrice();
         }
         int listSize = list.size();
@@ -134,6 +155,13 @@ public class Dashboard extends javax.swing.JFrame {
         txt_order_required_qty.setText(null);
     }
 
+    public void loadOrderListTable() {
+        OrderDao od = new OrderDaoImpl();
+        List<OrderListDto> list = od.getOrderList(user);
+        OrderModelTable model = new OrderModelTable(list);
+        order_table.setModel(model);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -147,7 +175,7 @@ public class Dashboard extends javax.swing.JFrame {
         jTextField3 = new javax.swing.JTextField();
         menuTab = new javax.swing.JTabbedPane();
         customer_panel = new javax.swing.JPanel();
-        user_password = new javax.swing.JPanel();
+        customer_form = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
         txt_user_first_name = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
@@ -198,7 +226,7 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         reloadProductTable = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        user_password1 = new javax.swing.JPanel();
+        cart = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
@@ -219,6 +247,15 @@ public class Dashboard extends javax.swing.JFrame {
         txt_nos_items = new javax.swing.JTextField();
         txt_grand_total = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
+        product_search_panel3 = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        order_table = new javax.swing.JTable();
+        product_search1 = new javax.swing.JButton();
+        txt_product_search_type1 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txt_product_search_name1 = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        reloadProductTable1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         label_user = new javax.swing.JLabel();
@@ -240,7 +277,14 @@ public class Dashboard extends javax.swing.JFrame {
 
         jTextField3.setText("jTextField3");
 
-        user_password.setBorder(javax.swing.BorderFactory.createTitledBorder("Customer Form"));
+        menuTab.setBackground(new java.awt.Color(153, 255, 255));
+        menuTab.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menuTabMouseClicked(evt);
+            }
+        });
+
+        customer_form.setBorder(javax.swing.BorderFactory.createTitledBorder("Customer Form"));
 
         jLabel20.setText("First Name:");
 
@@ -302,25 +346,25 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout user_passwordLayout = new javax.swing.GroupLayout(user_password);
-        user_password.setLayout(user_passwordLayout);
-        user_passwordLayout.setHorizontalGroup(
-            user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(user_passwordLayout.createSequentialGroup()
+        javax.swing.GroupLayout customer_formLayout = new javax.swing.GroupLayout(customer_form);
+        customer_form.setLayout(customer_formLayout);
+        customer_formLayout.setHorizontalGroup(
+            customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(customer_formLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(user_passwordLayout.createSequentialGroup()
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(customer_formLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(user_reset, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(user_passwordLayout.createSequentialGroup()
-                        .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(user_passwordLayout.createSequentialGroup()
+                    .addGroup(customer_formLayout.createSequentialGroup()
+                        .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(customer_formLayout.createSequentialGroup()
                                 .addComponent(user_save_update, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(user_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(user_passwordLayout.createSequentialGroup()
-                                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(customer_formLayout.createSequentialGroup()
+                                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel21)
                                     .addComponent(jLabel24)
                                     .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -329,7 +373,7 @@ public class Dashboard extends javax.swing.JFrame {
                                     .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel1))
                                 .addGap(32, 32, 32)
-                                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txt_user_address, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(txt_user_first_name)
                                     .addComponent(txt_user_username)
@@ -339,44 +383,44 @@ public class Dashboard extends javax.swing.JFrame {
                                     .addComponent(txt_user_mobile_no, javax.swing.GroupLayout.Alignment.TRAILING))))
                         .addGap(10, 10, 10))))
         );
-        user_passwordLayout.setVerticalGroup(
-            user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(user_passwordLayout.createSequentialGroup()
+        customer_formLayout.setVerticalGroup(
+            customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(customer_formLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
                     .addComponent(txt_user_first_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
                     .addComponent(txt_user_last_name, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel22)
                     .addComponent(txt_user_username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(txt_user_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cb_user_role, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel24))
                 .addGap(18, 18, 18)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel23)
                     .addComponent(txt_user_address, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_user_mobile_no, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(13, 13, 13)
                 .addComponent(user_reset)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(user_passwordLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(customer_formLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(user_delete)
                     .addComponent(user_save_update))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         product_search_panel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Customer Details"));
@@ -449,18 +493,16 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(product_search_panel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(product_search_panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(product_search_panel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 871, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 871, Short.MAX_VALUE)
                     .addGroup(product_search_panel1Layout.createSequentialGroup()
                         .addComponent(reloadCustomerTable, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
-                        .addGap(29, 29, 29)
+                        .addGap(26, 26, 26)
                         .addComponent(txt_user_search_username, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
-                        .addComponent(customer_search, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20))))
+                        .addGap(35, 35, 35)
+                        .addComponent(customer_search, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         product_search_panel1Layout.setVerticalGroup(
             product_search_panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -474,8 +516,8 @@ public class Dashboard extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(reloadCustomerTable)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout customer_panelLayout = new javax.swing.GroupLayout(customer_panel);
@@ -484,19 +526,19 @@ public class Dashboard extends javax.swing.JFrame {
             customer_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(customer_panelLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(user_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(customer_form, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(product_search_panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(134, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
         customer_panelLayout.setVerticalGroup(
             customer_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(customer_panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(customer_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(product_search_panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, Short.MAX_VALUE)
-                    .addComponent(user_password, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 245, Short.MAX_VALUE))
+                    .addComponent(customer_form, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(product_search_panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 118, Short.MAX_VALUE))
         );
 
         menuTab.addTab("Customer", customer_panel);
@@ -609,16 +651,13 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(product_delete)
                     .addComponent(product_save_update))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         product_search_panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Product Details"));
 
         product_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
                 {null, null, null, null, null}
             },
             new String [] {
@@ -682,7 +721,7 @@ public class Dashboard extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(product_search, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 891, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(139, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         product_search_panelLayout.setVerticalGroup(
             product_search_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -717,15 +756,15 @@ public class Dashboard extends javax.swing.JFrame {
             productPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(productPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(productPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(productPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(product_search_panel, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(224, Short.MAX_VALUE))
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
 
         menuTab.addTab("Product", productPanel);
 
-        user_password1.setBorder(javax.swing.BorderFactory.createTitledBorder("Order Form"));
+        cart.setBorder(javax.swing.BorderFactory.createTitledBorder("Cart"));
 
         jLabel25.setText("Item/product:");
 
@@ -788,64 +827,64 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout user_password1Layout = new javax.swing.GroupLayout(user_password1);
-        user_password1.setLayout(user_password1Layout);
-        user_password1Layout.setHorizontalGroup(
-            user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(user_password1Layout.createSequentialGroup()
-                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(user_password1Layout.createSequentialGroup()
+        javax.swing.GroupLayout cartLayout = new javax.swing.GroupLayout(cart);
+        cart.setLayout(cartLayout);
+        cartLayout.setHorizontalGroup(
+            cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cartLayout.createSequentialGroup()
+                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(cartLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(user_password1Layout.createSequentialGroup()
+                        .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(cartLayout.createSequentialGroup()
                                 .addComponent(jLabel26)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(txt_order_price, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(user_password1Layout.createSequentialGroup()
+                            .addGroup(cartLayout.createSequentialGroup()
                                 .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_order_items, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(user_password1Layout.createSequentialGroup()
-                                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(cartLayout.createSequentialGroup()
+                                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(100, 100, 100)
-                                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txt_order_available_qty)
                                     .addComponent(txt_order_required_qty, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, user_password1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cartLayout.createSequentialGroup()
                         .addContainerGap(41, Short.MAX_VALUE)
                         .addComponent(order_add_update, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(order_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, user_password1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, cartLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(reset_order, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        user_password1Layout.setVerticalGroup(
-            user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(user_password1Layout.createSequentialGroup()
+        cartLayout.setVerticalGroup(
+            cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(cartLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel25)
                     .addComponent(txt_order_items, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
                     .addComponent(txt_order_price, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel27)
                     .addComponent(txt_order_available_qty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(13, 13, 13)
-                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(txt_order_required_qty, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(16, 16, 16)
                 .addComponent(reset_order)
                 .addGap(11, 11, 11)
-                .addGroup(user_password1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(cartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(order_delete)
                     .addComponent(order_add_update))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -900,41 +939,41 @@ public class Dashboard extends javax.swing.JFrame {
         product_search_panel2Layout.setHorizontalGroup(
             product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(product_search_panel2Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 891, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_purchase, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(73, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, product_search_panel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(product_search_panel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 853, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(17, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, product_search_panel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(96, 96, 96))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, product_search_panel2Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(60, 60, 60)))
-                .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt_nos_items)
-                    .addComponent(txt_grand_total, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
-                .addGap(81, 81, 81))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txt_purchase, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(product_search_panel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(64, 64, 64)
+                                .addComponent(txt_nos_items, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(product_search_panel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(33, 33, 33)
+                                .addComponent(txt_grand_total, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(17, 17, 17))))
         );
         product_search_panel2Layout.setVerticalGroup(
             product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(product_search_panel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_nos_items, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txt_nos_items, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_grand_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addGap(18, 18, 18)
-                .addGroup(product_search_panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txt_grand_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(txt_purchase)
-                .addGap(33, 33, 33))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -943,34 +982,133 @@ public class Dashboard extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(user_password1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(product_search_panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(cart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(product_search_panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(user_password1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(245, 245, 245))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(product_search_panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(207, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(product_search_panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(134, Short.MAX_VALUE))
         );
 
         menuTab.addTab("Order", jPanel3);
+
+        product_search_panel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Order List"));
+
+        order_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Order By", "Order No.", "Item No.", "Total Amt.", "Order Date", "Action"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        order_table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                order_tableMouseClicked(evt);
+            }
+        });
+        jScrollPane7.setViewportView(order_table);
+
+        product_search1.setText("SEARCH");
+        product_search1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                product_search1ActionPerformed(evt);
+            }
+        });
+
+        txt_product_search_type1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_product_search_type1ActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Product Type");
+
+        txt_product_search_name1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_product_search_name1ActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("Product Name");
+
+        reloadProductTable1.setText("reload table");
+        reloadProductTable1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reloadProductTable1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout product_search_panel3Layout = new javax.swing.GroupLayout(product_search_panel3);
+        product_search_panel3.setLayout(product_search_panel3Layout);
+        product_search_panel3Layout.setHorizontalGroup(
+            product_search_panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, product_search_panel3Layout.createSequentialGroup()
+                .addContainerGap(57, Short.MAX_VALUE)
+                .addGroup(product_search_panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(product_search_panel3Layout.createSequentialGroup()
+                        .addComponent(reloadProductTable1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(119, 119, 119)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_product_search_name1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_product_search_type1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(product_search1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 891, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(53, 53, 53))
+        );
+        product_search_panel3Layout.setVerticalGroup(
+            product_search_panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, product_search_panel3Layout.createSequentialGroup()
+                .addGroup(product_search_panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(product_search_panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txt_product_search_type1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(product_search1)
+                        .addComponent(jLabel8)
+                        .addComponent(txt_product_search_name1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, product_search_panel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(reloadProductTable1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32))
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1367, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(110, Short.MAX_VALUE)
+                .addComponent(product_search_panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(97, 97, 97))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 624, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(product_search_panel3, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(138, Short.MAX_VALUE))
         );
 
         menuTab.addTab("OrderList", jPanel2);
@@ -996,55 +1134,51 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(503, 503, 503)
                 .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
-                .addComponent(label_user, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(label_user, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(logout, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(label_user, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(logout))
-                    .addComponent(jLabel14))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addGap(10, 10, 10))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(logout)
+                            .addComponent(label_user, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(menuTab, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(35, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(menuTab, javax.swing.GroupLayout.PREFERRED_SIZE, 1225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(menuTab, javax.swing.GroupLayout.PREFERRED_SIZE, 652, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(menuTab, javax.swing.GroupLayout.PREFERRED_SIZE, 561, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txt_product_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_nameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_product_nameActionPerformed
-
-    private void txt_product_search_typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_search_typeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_product_search_typeActionPerformed
 
     private void txt_user_first_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_user_first_nameActionPerformed
         // TODO add your handling code here:
@@ -1131,7 +1265,6 @@ public class Dashboard extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, result, "Success", JOptionPane.WARNING_MESSAGE);
         txt_user_username.setEditable(true);
         loadTableCustomer();
-        productItemList();
     }//GEN-LAST:event_user_save_updateActionPerformed
 
     private void user_resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_user_resetActionPerformed
@@ -1170,6 +1303,193 @@ public class Dashboard extends javax.swing.JFrame {
         txt_user_search_username.setText("");
         loadTableCustomer();
     }//GEN-LAST:event_reloadCustomerTableActionPerformed
+
+    private void cb_user_roleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_user_roleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cb_user_roleActionPerformed
+
+    private void txt_order_itemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_itemsActionPerformed
+
+    }//GEN-LAST:event_txt_order_itemsActionPerformed
+
+    private void reset_orderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_orderActionPerformed
+        resetOrderForm();
+        txt_temp_order_id = 0;
+    }//GEN-LAST:event_reset_orderActionPerformed
+
+    private void order_add_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_order_add_updateActionPerformed
+        String item = txt_order_items.getSelectedItem().toString();
+        ProductDao pd = new ProductDaoImpl();
+        String id[] = item.split("-");
+        if (txt_order_available_qty.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please Select Item " + txt_order_available_qty.getText(), "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int availableQty = Integer.parseInt(txt_order_available_qty.getText());
+        if (availableQty == 0) {
+            txt_order_required_qty.setEnabled(false);
+            order_add_update.setEnabled(false);
+        } else {
+            txt_order_required_qty.setEnabled(true);
+            order_add_update.setEnabled(true);
+        }
+        double unitPrice = Double.parseDouble(txt_order_price.getText());
+        Integer qty = null;
+        try {
+            if (txt_order_required_qty.getText().trim().length() == 0) {
+                JOptionPane.showMessageDialog(null, "Quantity is required", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            } else {
+                qty = Integer.parseInt(txt_order_required_qty.getText());
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Quantity should be numeric", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (availableQty < qty) {
+            JOptionPane.showMessageDialog(null, "Quantity must be less or equal to " + availableQty, "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Cart tempOrder = new Cart();
+        tempOrder.setProductId(Integer.parseInt(id[0]));
+        tempOrder.setItem(item);
+        tempOrder.setId(txt_temp_order_id);
+        tempOrder.setTotalQty(availableQty);
+        tempOrder.setUnitPrice(unitPrice);
+        tempOrder.setQty(qty);
+        OrderDao od = new OrderDaoImpl();
+        String status = od.saveUpdate(tempOrder);
+        if (status == "EXIST") {
+            JOptionPane.showMessageDialog(null, "this item already added", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        } else {
+            JOptionPane.showMessageDialog(null, status, "Success", JOptionPane.WARNING_MESSAGE);
+        }
+        resetOrderForm();
+        txt_temp_order_id = 0;
+        loadTableTempOrder();
+    }//GEN-LAST:event_order_add_updateActionPerformed
+
+    private void txt_order_required_qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_required_qtyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_order_required_qtyActionPerformed
+
+    private void txt_order_itemsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_order_itemsMouseClicked
+
+    }//GEN-LAST:event_txt_order_itemsMouseClicked
+
+    private void txt_order_available_qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_available_qtyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_order_available_qtyActionPerformed
+
+    private void temp_order_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_temp_order_tableMouseClicked
+        txt_temp_order_id = Integer.parseInt(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 0).toString());
+        txt_order_items.setSelectedItem(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 2).toString());
+        txt_order_required_qty.setText(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 3).toString());
+        txt_order_price.setText(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 4).toString());
+    }//GEN-LAST:event_temp_order_tableMouseClicked
+
+    private void order_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_order_deleteActionPerformed
+        int temp_orderId = txt_temp_order_id;
+        if (temp_orderId == 0) {
+            JOptionPane.showMessageDialog(null, "Please select item", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        OrderDao od = new OrderDaoImpl();
+        boolean status = od.deleteById(temp_orderId);
+        JOptionPane.showMessageDialog(null, "successfully deleted", "Success", JOptionPane.WARNING_MESSAGE);
+        resetOrderForm();
+        loadTableTempOrder();
+        txt_temp_order_id = 0;
+    }//GEN-LAST:event_order_deleteActionPerformed
+
+    private void txt_purchaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_purchaseActionPerformed
+        OrderDao od = new OrderDaoImpl();
+        List<Cart> list = od.getAllTempList();
+        OrderDao ods = new OrderDaoImpl();
+        String status = ods.purchase(list, user);
+        deleteAllTempOrderList();
+        loadTableTempOrder();
+        loadTableProduct();
+        JOptionPane.showMessageDialog(null, "purchase order done", "Success", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_txt_purchaseActionPerformed
+
+    private void txt_order_itemsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_txt_order_itemsItemStateChanged
+        if (txt_order_items.getSelectedItem().toString() == "Select Item") {
+            return;
+        }
+        String item = txt_order_items.getSelectedItem().toString();
+        ProductDao pd = new ProductDaoImpl();
+        String id[] = item.split("-");
+        Product product = pd.getById(Integer.parseInt(id[0]));
+        txt_order_price.setText(String.valueOf(product.getPrice()));
+        txt_order_available_qty.setText(String.valueOf(product.getTotalQty()));
+        if (product.getTotalQty() == 0) {
+            txt_order_required_qty.setEnabled(false);
+            order_add_update.setEnabled(false);
+        } else {
+            txt_order_required_qty.setEnabled(true);
+            order_add_update.setEnabled(true);
+        }
+    }//GEN-LAST:event_txt_order_itemsItemStateChanged
+
+    private void reloadProductTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadProductTableActionPerformed
+        txt_product_search_name.setText("");
+        txt_product_search_type.setText("");
+        loadTableProduct();
+    }//GEN-LAST:event_reloadProductTableActionPerformed
+
+    private void txt_product_search_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_search_nameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_product_search_nameActionPerformed
+
+    private void txt_product_search_typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_search_typeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_product_search_typeActionPerformed
+
+    private void product_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_searchActionPerformed
+        String name = txt_product_search_name.getText().trim();
+        String type = txt_product_search_type.getText().trim();
+        if ((name.length() == 0) && (type.length() == 0)) {
+            JOptionPane.showMessageDialog(null, "Please enter the at least one field for search", "Success", JOptionPane.WARNING_MESSAGE);
+        }
+        ProductDao pd = new ProductDaoImpl();
+        List<Product> list = pd.getAllProductSearch(name, type);
+        ProductModelTable model = new ProductModelTable(list);
+        product_table.setModel(model);
+    }//GEN-LAST:event_product_searchActionPerformed
+
+    private void product_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_product_tableMouseClicked
+        // TODO add your handling code here:
+        txt_product_id = Integer.parseInt(product_table.getValueAt(product_table.getSelectedRow(), 0).toString());
+        ProductDao pd = new ProductDaoImpl();
+        Product product = pd.getById(txt_product_id);
+        txt_product_name.setText(product.getProductName());
+        txt_product_name.setEditable(false);
+        cb_product_type.setSelectedItem(product.getProductType().toString());
+        cb_product_type.setEnabled(false);
+        String qty = String.valueOf(product.getTotalQty());
+        txt_product_quantity.setText(qty);
+        String price = String.valueOf(product.getPrice());
+        txt_product_price.setText(price);
+        txt_product_description.setText(product.getDescription());
+    }//GEN-LAST:event_product_tableMouseClicked
+
+    private void reset_productActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_productActionPerformed
+        resetProductForm();
+    }//GEN-LAST:event_reset_productActionPerformed
+
+    private void product_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_deleteActionPerformed
+        int productId = txt_product_id;
+        System.out.println("productId::" + productId);
+        ProductDao productDao = new ProductDaoImpl();
+        boolean status = productDao.deleteProduct(productId);
+        JOptionPane.showMessageDialog(null, "Deleted", "Deleted", JOptionPane.WARNING_MESSAGE);
+        loadTableProduct();
+        resetProductForm();
+    }//GEN-LAST:event_product_deleteActionPerformed
 
     private void product_save_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_save_updateActionPerformed
 
@@ -1233,196 +1553,57 @@ public class Dashboard extends javax.swing.JFrame {
         txt_product_name.setEditable(true);
         cb_product_type.setEnabled(true);
         loadTableProduct();
-        productItemList();
-
     }//GEN-LAST:event_product_save_updateActionPerformed
 
-    private void product_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_product_tableMouseClicked
+    private void txt_product_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_nameActionPerformed
         // TODO add your handling code here:
-        txt_product_id = Integer.parseInt(product_table.getValueAt(product_table.getSelectedRow(), 0).toString());
-        ProductDao pd = new ProductDaoImpl();
-        Product product = pd.getById(txt_product_id);
-        txt_product_name.setText(product.getProductName());
-        txt_product_name.setEditable(false);
-        cb_product_type.setSelectedItem(product.getProductType().toString());
-        cb_product_type.setEnabled(false);
-        String qty = String.valueOf(product.getTotalQty());
-        txt_product_quantity.setText(qty);
-        String price = String.valueOf(product.getPrice());
-        txt_product_price.setText(price);
-        txt_product_description.setText(product.getDescription());
+    }//GEN-LAST:event_txt_product_nameActionPerformed
 
-    }//GEN-LAST:event_product_tableMouseClicked
+    private void menuTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuTabMouseClicked
+        int selectedMenu = menuTab.getSelectedIndex();
+        String MenuName = menuTab.getTitleAt(selectedMenu);
+        System.out.println("Tab Value:" + MenuName);
+        switch (MenuName.toUpperCase()) {
+            case "CUSTOMER":
+                loadTableCustomer();
+                break;
+            case "PRODUCT":
+                loadTableProduct();
+                break;
+            case "ORDER":
+                productItemList();
+                break;
+            case "ORDERLIST":
+                loadOrderListTable();
+                break;
+        }
+//        if (tab == 3) {
+//          
+//        }
+    }//GEN-LAST:event_menuTabMouseClicked
 
-    private void cb_user_roleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_user_roleActionPerformed
+    private void reloadProductTable1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadProductTable1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cb_user_roleActionPerformed
+    }//GEN-LAST:event_reloadProductTable1ActionPerformed
 
-    private void reset_productActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_productActionPerformed
-        resetProductForm();
-    }//GEN-LAST:event_reset_productActionPerformed
-
-    private void product_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_deleteActionPerformed
-        int productId = txt_product_id;
-        System.out.println("productId::" + productId);
-        ProductDao productDao = new ProductDaoImpl();
-        boolean status = productDao.deleteProduct(productId);
-        JOptionPane.showMessageDialog(null, "Deleted", "Deleted", JOptionPane.WARNING_MESSAGE);
-        loadTableProduct();
-        resetProductForm();
-    }//GEN-LAST:event_product_deleteActionPerformed
-
-    private void txt_product_search_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_search_nameActionPerformed
+    private void txt_product_search_name1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_search_name1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_product_search_nameActionPerformed
+    }//GEN-LAST:event_txt_product_search_name1ActionPerformed
 
-    private void product_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_searchActionPerformed
-        String name = txt_product_search_name.getText().trim();
-        String type = txt_product_search_type.getText().trim();
-        if ((name.length() == 0) && (type.length() == 0)) {
-            JOptionPane.showMessageDialog(null, "Please enter the at least one field for search", "Success", JOptionPane.WARNING_MESSAGE);
-        }
-        ProductDao pd = new ProductDaoImpl();
-        List<Product> list = pd.getAllProductSearch(name, type);
-        ProductModelTable model = new ProductModelTable(list);
-        product_table.setModel(model);
-    }//GEN-LAST:event_product_searchActionPerformed
-
-    private void reloadProductTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadProductTableActionPerformed
-        txt_product_search_name.setText("");
-        txt_product_search_type.setText("");
-        loadTableProduct();
-    }//GEN-LAST:event_reloadProductTableActionPerformed
-
-    private void txt_order_itemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_itemsActionPerformed
-
-    }//GEN-LAST:event_txt_order_itemsActionPerformed
-
-    private void reset_orderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reset_orderActionPerformed
-        resetOrderForm();
-        txt_temp_order_id = 0;
-    }//GEN-LAST:event_reset_orderActionPerformed
-
-    private void order_add_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_order_add_updateActionPerformed
-        String item = txt_order_items.getSelectedItem().toString();
-        ProductDao pd = new ProductDaoImpl();
-        String id[] = item.split("-");
-        if (txt_order_available_qty.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please Select Item " + txt_order_available_qty.getText(), "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        int availableQty = Integer.parseInt(txt_order_available_qty.getText());
-        if(availableQty==0){
-            txt_order_required_qty.setEnabled(false);
-            order_add_update.setEnabled(false);
-        }else{
-            txt_order_required_qty.setEnabled(true);
-            order_add_update.setEnabled(true);
-        }
-        double unitPrice = Double.parseDouble(txt_order_price.getText());
-        System.out.println("unit" + unitPrice);
-        Integer qty = null;
-        try {
-            if (txt_order_required_qty.getText().trim().length() == 0) {
-                JOptionPane.showMessageDialog(null, "Quantity is required", "Warning", JOptionPane.WARNING_MESSAGE);
-                return;
-            } else {
-                qty = Integer.parseInt(txt_order_required_qty.getText());
-            }
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Quantity should be numeric", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (availableQty < qty) {
-            JOptionPane.showMessageDialog(null, "Quantity must be less or equal to " + availableQty, "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        CartOrder tempOrder = new CartOrder();
-        tempOrder.setProductId(Integer.parseInt(id[0]));
-        tempOrder.setItem(item);
-        tempOrder.setUserId(user.getId());
-        tempOrder.setId(txt_temp_order_id);
-        tempOrder.setTotalQty(availableQty);
-        tempOrder.setUnitPrice(unitPrice);
-        tempOrder.setQty(qty);
-        OrderDao od = new OrderDaoImpl();
-        String status = od.saveUpdate(tempOrder);
-        if (status == "EXIST") {
-            JOptionPane.showMessageDialog(null, "this item already added", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        } else {
-            JOptionPane.showMessageDialog(null, status, "Success", JOptionPane.WARNING_MESSAGE);
-        }
-        resetOrderForm();
-        txt_temp_order_id = 0;
-        loadTableTempOrder();
-    }//GEN-LAST:event_order_add_updateActionPerformed
-
-    private void txt_order_required_qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_required_qtyActionPerformed
+    private void txt_product_search_type1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_product_search_type1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_order_required_qtyActionPerformed
+    }//GEN-LAST:event_txt_product_search_type1ActionPerformed
 
-    private void txt_order_itemsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txt_order_itemsMouseClicked
-
-    }//GEN-LAST:event_txt_order_itemsMouseClicked
-
-    private void txt_order_available_qtyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_order_available_qtyActionPerformed
+    private void product_search1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_product_search1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_order_available_qtyActionPerformed
+    }//GEN-LAST:event_product_search1ActionPerformed
 
-    private void temp_order_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_temp_order_tableMouseClicked
-        txt_temp_order_id = Integer.parseInt(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 0).toString());
-        txt_order_items.setSelectedItem(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 2).toString());
-        txt_order_required_qty.setText(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 3).toString());
-        txt_order_price.setText(temp_order_table.getValueAt(temp_order_table.getSelectedRow(), 4).toString());
-    }//GEN-LAST:event_temp_order_tableMouseClicked
-
-    private void order_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_order_deleteActionPerformed
-        int temp_orderId = txt_temp_order_id;
-        if (temp_orderId == 0) {
-            JOptionPane.showMessageDialog(null, "Please select item", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        OrderDao od = new OrderDaoImpl();
-        boolean status = od.deleteById(temp_orderId);
-        JOptionPane.showMessageDialog(null, "successfully deleted", "Success", JOptionPane.WARNING_MESSAGE);
-        resetOrderForm();
-        loadTableTempOrder();
-        txt_temp_order_id = 0;
-    }//GEN-LAST:event_order_deleteActionPerformed
-
-    private void txt_purchaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_purchaseActionPerformed
-        OrderDao od=new OrderDaoImpl();
-        List<CartOrder> list = od.getAllTempList();
-        OrderDao ods=new OrderDaoImpl();
-        String status=ods.purchase(list);
-        deleteAllTempOrderList();
-        loadTableTempOrder();
-        loadTableProduct();
-        JOptionPane.showMessageDialog(null, "purchase order done", "Success", JOptionPane.WARNING_MESSAGE);        
-    }//GEN-LAST:event_txt_purchaseActionPerformed
-
-    private void txt_order_itemsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_txt_order_itemsItemStateChanged
-        if(txt_order_items.getSelectedItem().toString()=="Select Item"){
-            return;
-        }
-        String item = txt_order_items.getSelectedItem().toString();
-        ProductDao pd = new ProductDaoImpl();
-        String id[] = item.split("-");
-        Product product = pd.getById(Integer.parseInt(id[0]));
-        txt_order_price.setText(String.valueOf(product.getPrice()));
-        txt_order_available_qty.setText(String.valueOf(product.getTotalQty()));
-           if(product.getTotalQty()==0){
-            txt_order_required_qty.setEnabled(false);
-            order_add_update.setEnabled(false);
-        }else{
-            txt_order_required_qty.setEnabled(true);
-            order_add_update.setEnabled(true);
-        }
-    }//GEN-LAST:event_txt_order_itemsItemStateChanged
-
+    private void order_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_order_tableMouseClicked
+        OrderViewFrame orderViewFrame = new OrderViewFrame();
+       orderViewFrame.dispatchEvent(new WindowEvent(orderViewFrame, WindowEvent.WINDOW_CLOSING));
+        String orderNo = order_table.getValueAt(order_table.getSelectedRow(), 0).toString();
+        orderViewFrame.setVisible(true);
+    }//GEN-LAST:event_order_tableMouseClicked
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -1433,13 +1614,16 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel cart;
     private javax.swing.JComboBox<String> cb_product_type;
     private javax.swing.JComboBox<String> cb_user_role;
+    private javax.swing.JPanel customer_form;
     private javax.swing.JPanel customer_panel;
     private javax.swing.JButton customer_search;
     private javax.swing.JTable customer_table;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -1460,6 +1644,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -1472,6 +1657,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
@@ -1480,16 +1666,20 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTabbedPane menuTab;
     private javax.swing.JButton order_add_update;
     private javax.swing.JButton order_delete;
+    private javax.swing.JTable order_table;
     private javax.swing.JPanel productPanel;
     private javax.swing.JButton product_delete;
     private javax.swing.JButton product_save_update;
     private javax.swing.JButton product_search;
+    private javax.swing.JButton product_search1;
     private javax.swing.JPanel product_search_panel;
     private javax.swing.JPanel product_search_panel1;
     private javax.swing.JPanel product_search_panel2;
+    private javax.swing.JPanel product_search_panel3;
     private javax.swing.JTable product_table;
     private javax.swing.JButton reloadCustomerTable;
     private javax.swing.JButton reloadProductTable;
+    private javax.swing.JButton reloadProductTable1;
     private javax.swing.JButton reset_order;
     private javax.swing.JButton reset_product;
     private javax.swing.JTable temp_order_table;
@@ -1504,7 +1694,9 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTextField txt_product_price;
     private javax.swing.JTextField txt_product_quantity;
     private javax.swing.JTextField txt_product_search_name;
+    private javax.swing.JTextField txt_product_search_name1;
     private javax.swing.JTextField txt_product_search_type;
+    private javax.swing.JTextField txt_product_search_type1;
     private javax.swing.JButton txt_purchase;
     private javax.swing.JTextField txt_user_address;
     private javax.swing.JTextField txt_user_first_name;
@@ -1514,8 +1706,6 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JTextField txt_user_search_username;
     private javax.swing.JTextField txt_user_username;
     private javax.swing.JButton user_delete;
-    private javax.swing.JPanel user_password;
-    private javax.swing.JPanel user_password1;
     private javax.swing.JButton user_reset;
     private javax.swing.JButton user_save_update;
     // End of variables declaration//GEN-END:variables

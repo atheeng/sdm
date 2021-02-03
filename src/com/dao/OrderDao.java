@@ -5,7 +5,9 @@
  */
 package com.dao;
 
-import com.model.CartOrder;
+import com.dto.OrderListDto;
+import com.model.Cart;
+import com.model.User;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +16,12 @@ import java.util.Map;
  * @author Arun Tamang
  */
 public interface OrderDao {
-   String saveUpdate(CartOrder order);
+   String saveUpdate(Cart order);
    boolean existingItem(String item);
    boolean deleteAll();
    boolean deleteById(int id);
-   List<CartOrder> getAllTempList();
-   String purchase(List<CartOrder> list);
-    
+   List<Cart> getAllTempList();
+   String purchase(List<Cart> list,User user);
+   List<OrderListDto> getOrderList(User user);
+      
 }

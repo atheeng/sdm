@@ -5,28 +5,22 @@
  */
 package com.dto;
 
-import com.model.Cart;
-import com.model.User;
+import com.model.Product;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-
-/**
- *
- * @author Arun Tamang
- */
-public class TempOrderModelTable extends AbstractTableModel{
-    List<Cart> tempOrders = new ArrayList<>();
+public class OrderModelTable extends AbstractTableModel{
+    List<OrderListDto> orderList = new ArrayList<>();
 
     private final String[] columnNames = new String[]{
-        "order Id", "product Id","Item", "Qty","Unit Rate", "Total Price",
+        "OrderBy", "OrderNo","ItmeNo", "TotalAmt", "Date","Action"
     };
     private final Class[] columnClass = new Class[]{
-        Integer.class, String.class, String.class , String.class, String.class,String.class, String.class
+        String.class, String.class , String.class, String.class,String.class,String.class
     };
 
-    public TempOrderModelTable(List<Cart> tempOrders) {
-        this.tempOrders = tempOrders;
+    public OrderModelTable(List<OrderListDto> orderList) {
+        this.orderList = orderList;
     }
 
     @Override
@@ -43,7 +37,7 @@ public class TempOrderModelTable extends AbstractTableModel{
     @Override
     public int getRowCount()
     {
-        return tempOrders.size();
+        return orderList.size();
     }
     @Override
     public int getColumnCount() {
@@ -52,24 +46,24 @@ public class TempOrderModelTable extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Cart row = tempOrders.get(rowIndex);
+        OrderListDto row = orderList.get(rowIndex);
         if(0 == columnIndex) {
-            return row.getId();
+            return row.getOrderBy();
         }
         else if(1 == columnIndex) {
-            return row.getProductId();
+            return row.getItemNo();
         }
         else if(2 == columnIndex) {
-             return row.getItem();
+             return row.getItemNo();
         }
         else if(3 == columnIndex) {
-            return row.getQty();
+            return row.getTotalAmt();
         }
         else if(4 == columnIndex) {
-            return row.getUnitPrice();
+            return row.getOrderDate();
         }
-         else if(5 == columnIndex) {
-            return row.getQty()*row.getUnitPrice();
+        else if(5 == columnIndex) {
+            return row.getAction();
         }
         return null;
     }

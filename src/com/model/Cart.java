@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Arun Tamang
  */
-public class CartOrder {
+public class Cart {
 
     int id;
     int productId;

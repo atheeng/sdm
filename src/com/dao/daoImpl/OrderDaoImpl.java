@@ -5,10 +5,13 @@
  */
 package com.dao.daoImpl;
 
+import com.Enum.RoleTypeEnum;
 import com.Enum.StatusEnum;
 import com.dao.OrderDao;
 import com.db.DataBaseConnection;
-import com.model.CartOrder;
+import com.dto.OrderListDto;
+import com.model.Cart;
+import com.model.User;
 import com.util.ProductReserve;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,7 +25,7 @@ import java.util.Map;
  *
  * @author Arun Tamang
  */
-public class OrderDaoImpl implements OrderDao {
+public class OrderDaoImpl implements OrderDao{
 
     Connection conn = null;
 
@@ -30,21 +33,21 @@ public class OrderDaoImpl implements OrderDao {
     java.sql.Date date = new java.sql.Date(millis);
 
     @Override
-    public String saveUpdate(CartOrder tempOrder) {
+    public String saveUpdate(Cart card) {
         long millis = System.currentTimeMillis();
         java.sql.Date date = new java.sql.Date(millis);
         int id = 0;
         int idrows = 0;
-        if (tempOrder.getId() == 0) {
+        if (card.getId() == 0) {
 //            for id
-            boolean existingUser = existingItem(tempOrder.getItem());
+            boolean existingUser = existingItem(card.getItem());
             if (existingUser == true) {
                 return "EXIST";
             } else {
                 try {
                     conn = DataBaseConnection.getInstance().getConnection();
                     Statement statement = conn.createStatement();
-                    ResultSet rs = statement.executeQuery("SELECT COUNT(*) as id FROM temp_order");
+                    ResultSet rs = statement.executeQuery("SELECT COUNT(*) as id FROM cart");
                     while (rs.next()) {
                         idrows = rs.getInt(1);
                     }
@@ -61,40 +64,40 @@ public class OrderDaoImpl implements OrderDao {
             }
             try {
                 conn = DataBaseConnection.getInstance().getConnection();
-                String query = "INSERT INTO temp_order VALUES(?,?,?,?,?,?)";
+                String query = "INSERT INTO cart VALUES(?,?,?,?,?,?)";
                 PreparedStatement preparedStmt = conn.prepareStatement(query);
                 preparedStmt.setInt(1, idrows);
-                preparedStmt.setInt(2, tempOrder.getProductId());
-                preparedStmt.setString(3, tempOrder.getItem());
-                preparedStmt.setDouble(4, tempOrder.getUnitPrice());
-                preparedStmt.setInt(5, tempOrder.getQty());
-                preparedStmt.setDouble(6, (tempOrder.getUnitPrice()) * (tempOrder.getQty()));
+                preparedStmt.setInt(2, card.getProductId());
+                preparedStmt.setString(3, card.getItem());
+                preparedStmt.setDouble(4, card.getUnitPrice());
+                preparedStmt.setInt(5, card.getQty());
+                preparedStmt.setDouble(6, (card.getUnitPrice()) * (card.getQty()));
                 preparedStmt.executeUpdate();
                 preparedStmt.close();
 
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return tempOrder.getItem() + " with " + tempOrder.getQty() + " quantity is added";
+            return card.getItem() + " with " + card.getQty() + " quantity is added";
 
         } else {
             try {
                 conn = DataBaseConnection.getInstance().getConnection();
-                String query = "UPDATE temp_order SET product_id=?,item=?,unit_price=?,quantity=?,totalAmount=? where id=?";
+                String query = "UPDATE cart SET product_id=?,item=?,unit_price=?,quantity=?,totalAmount=? where id=?";
                 PreparedStatement preparedStmt = conn.prepareStatement(query);
-                preparedStmt.setInt(1, tempOrder.getProductId());
-                preparedStmt.setString(2, tempOrder.getItem());
-                preparedStmt.setDouble(3, tempOrder.getUnitPrice());
-                preparedStmt.setInt(4, tempOrder.getQty());
-                preparedStmt.setDouble(5, (tempOrder.getUnitPrice()) * (tempOrder.getQty()));
-                preparedStmt.setInt(6, tempOrder.getId());
+                preparedStmt.setInt(1, card.getProductId());
+                preparedStmt.setString(2, card.getItem());
+                preparedStmt.setDouble(3, card.getUnitPrice());
+                preparedStmt.setInt(4, card.getQty());
+                preparedStmt.setDouble(5, (card.getUnitPrice()) * (card.getQty()));
+                preparedStmt.setInt(6, card.getId());
                 preparedStmt.executeUpdate();
                 preparedStmt.close();
 
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return tempOrder.getItem() + " with " + tempOrder.getQty() + " quantity is updated";
+            return card.getItem() + " with " + card.getQty() + " quantity is updated";
         }
     }
 
@@ -103,7 +106,7 @@ public class OrderDaoImpl implements OrderDao {
         Integer id = null;
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "SELECT * FROM temp_order WHERE item=?";
+            String query = "SELECT * FROM cart WHERE item=?";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setString(1, item);
             ResultSet rs = preparedStmt.executeQuery();
@@ -124,10 +127,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public boolean deleteAll() {
-        System.out.println("aayo :::::: all delete");
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "delete from temp_order";
+            String query = "delete from cart";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.executeUpdate();
             preparedStmt.close();
@@ -142,7 +144,7 @@ public class OrderDaoImpl implements OrderDao {
     public boolean deleteById(int id) {
         try {
             conn = DataBaseConnection.getInstance().getConnection();
-            String query = "delete from temp_order where id=?";
+            String query = "delete from cart where id=?";
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setInt(1, id);
             preparedStmt.executeUpdate();
@@ -155,14 +157,14 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<CartOrder> getAllTempList() {
-        List<CartOrder> productList = new ArrayList<>();
+    public List<Cart> getAllTempList() {
+        List<Cart> productList = new ArrayList<>();
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT id,product_id,item,unit_price,quantity,totalAmount FROM temp_order");
+            ResultSet rs = statement.executeQuery("SELECT id,product_id,item,unit_price,quantity,totalAmount FROM cart");
             while (rs.next()) {
-                CartOrder product = new CartOrder();
+                Cart product = new Cart();
                 product.setId(rs.getInt(1));
                 product.setProductId(rs.getInt(2));
                 product.setItem(rs.getString(3));
@@ -180,21 +182,22 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public String purchase(List<CartOrder> list) {
+    public String purchase(List<Cart> list,User user) {
 //        for orderno;
         String id = null;
         String date = null;
-        int userId = list.get(0).getUserId();
+        int userId = user.getId();
         int itemNo = list.size();
         Double totalAmount = 0.00;
-        for (CartOrder t : list) {
-            totalAmount += t.getTotalQty();
+        for (Cart t : list) {
+            totalAmount =totalAmount+t.getTotalPrice();
         }
+        System.out.println("total Amount::"+totalAmount);
         try {
             Connection conn = null;
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT IFNULL(MAX(id),'1') as id,SYSDATE() as date FROM orders;");
+            ResultSet rs = statement.executeQuery("SELECT IFNULL(MAX(id),'1') as id,SYSDATE() as date FROM orders");
             while (rs.next()) {
                 id = rs.getString("id");
                 date = rs.getString("date");
@@ -224,7 +227,7 @@ public class OrderDaoImpl implements OrderDao {
             System.out.println("error add orders :" + e.getMessage());
         }
         //orderItem
-        for (CartOrder tem : list) {
+        for (Cart tem : list) {
             try {
                 Connection conn = null;
                 conn = DataBaseConnection.getInstance().getConnection();
@@ -239,7 +242,7 @@ public class OrderDaoImpl implements OrderDao {
             }
         }
         //update item quantity
-        for (CartOrder tem : list) {
+        for (Cart tem : list) {
             int quantity = 0;
             try {
                 conn = DataBaseConnection.getInstance().getConnection();
@@ -272,6 +275,40 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         return "TRUE";
+    }
+
+    @Override
+    public List<OrderListDto> getOrderList(User user) {
+        String role=user.getRole().toString();
+        String params="";
+        if(role==(RoleTypeEnum.ADMIN.toString()) || role==(RoleTypeEnum.MANAGER.toString())){
+        }else{
+           params= "WHERE o.user_id="+user.getId(); 
+        }
+        List<OrderListDto> orderList=new ArrayList<>();
+        try {
+            Connection conn = null;
+            conn = DataBaseConnection.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT CONCAT(u.first_name ,' ',u.last_name) AS NAME ,o.order_no,o.no_item,o.total_amount,o.order_date\n" +
+                    "FROM orders o INNER JOIN USER u ON o.user_id=u.id "+params+" ");
+            while (rs.next()) {
+                OrderListDto order=new OrderListDto();
+                order.setOrderBy(rs.getString(1));
+                order.setOrderNo(rs.getString(2));
+                order.setItemNo(rs.getInt(3));
+                order.setTotalAmt(rs.getDouble(4));
+                order.setOrderDate(rs.getString(5));
+                order.setAction("VIEW DETAILS");
+                orderList.add(order);
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return orderList;
     }
 
 }
