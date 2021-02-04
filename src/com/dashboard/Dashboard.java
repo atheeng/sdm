@@ -56,7 +56,12 @@ public class Dashboard extends javax.swing.JFrame {
 
         int selectedMenu = menuTab.getSelectedIndex();
         String MenuName = menuTab.getTitleAt(selectedMenu);
-        System.out.println("Tab Value:" + MenuName);
+        productItemList();
+
+        if (user.getRole().toString() == "CUSTOMER") {
+            menuTab.remove(1);
+            menuTab.remove(0);
+        }
         switch (MenuName.toUpperCase()) {
             case "CUSTOMER":
                 loadTableCustomer();
@@ -64,16 +69,9 @@ public class Dashboard extends javax.swing.JFrame {
             case "PRODUCT":
                 loadTableProduct();
                 break;
-            case "ORDER":
-                productItemList();
-                break;
             case "ORDERLIST":
                 loadOrderListTable();
                 break;
-        }
-
-        if (user.getRole().toString() == "USER") {
-
         }
     }
 
@@ -1570,16 +1568,10 @@ public class Dashboard extends javax.swing.JFrame {
             case "PRODUCT":
                 loadTableProduct();
                 break;
-            case "ORDER":
-                productItemList();
-                break;
             case "ORDERLIST":
                 loadOrderListTable();
                 break;
         }
-//        if (tab == 3) {
-//          
-//        }
     }//GEN-LAST:event_menuTabMouseClicked
 
     private void reloadProductTable1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadProductTable1ActionPerformed
@@ -1599,9 +1591,10 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_product_search1ActionPerformed
 
     private void order_tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_order_tableMouseClicked
+        
+        String orderNo = order_table.getValueAt(order_table.getSelectedRow(), 1).toString();
         OrderViewFrame orderViewFrame = new OrderViewFrame();
-       orderViewFrame.dispatchEvent(new WindowEvent(orderViewFrame, WindowEvent.WINDOW_CLOSING));
-        String orderNo = order_table.getValueAt(order_table.getSelectedRow(), 0).toString();
+        orderViewFrame.loadItemDetails(orderNo);
         orderViewFrame.setVisible(true);
     }//GEN-LAST:event_order_tableMouseClicked
     public static void main(String args[]) {

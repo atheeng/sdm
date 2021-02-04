@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -193,11 +194,11 @@ public class OrderDaoImpl implements OrderDao{
             totalAmount =totalAmount+t.getTotalPrice();
         }
         System.out.println("total Amount::"+totalAmount);
-        try {
+         try {
             Connection conn = null;
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT IFNULL(MAX(id),'1') as id,SYSDATE() as date FROM orders");
+            ResultSet rs = statement.executeQuery("SELECT IFNULL(MAX(id),'1') as id,DATE_FORMAT(NOW(),'%Y-%m-%d') as date FROM orders");
             while (rs.next()) {
                 id = rs.getString("id");
                 date = rs.getString("date");
@@ -207,8 +208,8 @@ public class OrderDaoImpl implements OrderDao{
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        String[] finalDate = date.split(" ");
-        String orderNo = finalDate[0] + "-" + id;
+        String[] finalDate = date.split("-");
+        String orderNo = finalDate[0]+finalDate[1]+finalDate[2]+id;
         // orders
         try {
             Connection conn = null;
@@ -228,13 +229,14 @@ public class OrderDaoImpl implements OrderDao{
         }
         //orderItem
         for (Cart tem : list) {
-            try {
+             try {
                 Connection conn = null;
                 conn = DataBaseConnection.getInstance().getConnection();
-                String query = "insert into order_item(order_no,product_id) values(?,?)";
+                String query = "insert into order_item(order_no,product_id,qty) values(?,?,?)";
                 PreparedStatement preparedStmt = conn.prepareStatement(query);
                 preparedStmt.setString(1, orderNo);
                 preparedStmt.setInt(2, tem.getProductId());
+                preparedStmt.setDouble(3, tem.getQty());
                 preparedStmt.executeUpdate();
                 preparedStmt.close();
             } catch (Exception e) {
@@ -309,6 +311,34 @@ public class OrderDaoImpl implements OrderDao{
             System.out.println(e.getMessage());
         }
         return orderList;
+    }
+
+    @Override
+    public List<Map<String, String>> getOrderItemList(String orderNo) {
+        List<Map<String,String>> orderItemList = new ArrayList<>();
+        try {
+            conn = DataBaseConnection.getInstance().getConnection();
+            String query = "SELECT oi.order_no,p.id,p.product_name,p.product_type,oi.qty,p.price,p.description FROM product p "
+                    + "INNER JOIN order_item oi ON p.id=oi.product_id where oi.order_no=?";
+            System.out.println("query"+query);
+            PreparedStatement preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setString(1, orderNo);
+            ResultSet rs = preparedStmt.executeQuery();
+            while (rs.next()) {
+                Map<String,String> orderItemMap=new HashMap<>();
+                orderItemMap.put("orderNo", rs.getString(1));
+                orderItemMap.put("productName",rs.getString(2)+"-"+rs.getString(3)+"("+rs.getString(4)+")");
+                orderItemMap.put("qty", rs.getString(5));
+                orderItemMap.put("unitPrice", rs.getString(6));
+                orderItemMap.put("description", rs.getString(7));
+                orderItemList.add(orderItemMap);
+            }
+            rs.close();
+            preparedStmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return orderItemList;
     }
 
 }

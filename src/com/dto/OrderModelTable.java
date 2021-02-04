@@ -51,7 +51,7 @@ public class OrderModelTable extends AbstractTableModel{
             return row.getOrderBy();
         }
         else if(1 == columnIndex) {
-            return row.getItemNo();
+            return row.getOrderNo();
         }
         else if(2 == columnIndex) {
              return row.getItemNo();

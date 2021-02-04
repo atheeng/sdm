@@ -1,7 +1,10 @@
 
 package view;
 
+import com.dao.OrderDao;
+import com.dao.daoImpl.OrderDaoImpl;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -10,36 +13,23 @@ public class OrderViewFrame extends javax.swing.JFrame {
         initComponents();
     }
 
-    void loadOrderData(int id){
-//        OrderDao orderDao = new OrderDaoImpl();
-//        OrderDto orderDto = orderDao.findOrderById(id);
-//        if(orderDto == null){
-//            JOptionPane.showMessageDialog(null, "Order id " + id + " doesnot found.");
-//            return;
-//        }
-//        label_id.setText(String.valueOf(id));
-//        label_created_date.setText(orderDto.getCreatedDate().toString());
-//        label_name.setText(orderDto.getClientName());
-//        label_grand_total.setText(String.valueOf(orderDto.getGrandTotal()));
-//        label_status.setText(orderDto.getStatus().toString());        
-//        
-//        OrderItemDao orderItemDao = new OrderItemDaoImpl();
-//        List<OrderItemDto> orderItems = orderItemDao.orderItems(id);
-//        
-//        DefaultTableModel model = new DefaultTableModel();
-//        String headers[] = { "S.No.", "Name", "Quantity", "Unit Price" ,"Total Amount" };
-//        model.setColumnIdentifiers(headers);
-//        for(OrderItemDto orderItem: orderItems){
-//            model.addRow(
-//                    new String[]{ 
-//                        String.valueOf(orderItem.getId()), 
-//                        orderItem.getItemName(), 
-//                        String.valueOf(orderItem.getQuantity()), 
-//                        String.valueOf(orderItem.getUnitPrice()), 
-//                        String.valueOf(orderItem.getUnitPrice()*orderItem.getQuantity())
-//            });
-//        }
-//        tbl_order_items.setModel(model);
+   public void loadItemDetails(String orderNo){
+    OrderDao orderDao = new OrderDaoImpl();
+        List<Map<String, String>> list = orderDao.getOrderItemList(orderNo);
+        DefaultTableModel model = new DefaultTableModel();
+        String headers[] = {"Order No.", "Product","Qty", "Unit Price", "Description"};
+        model.setColumnIdentifiers(headers);
+        for (Map<String, String> orderItem : list) {
+            model.addRow(
+                    new String[]{
+                        orderItem.get("orderNo"),
+                        orderItem.get("productName"),
+                        orderItem.get("qty"),
+                        orderItem.get("unitPrice"),
+                        orderItem.get("description")
+                    });
+        }
+        tbl_order_items.setModel(model);
     
     }
     @SuppressWarnings("unchecked")
@@ -48,18 +38,10 @@ public class OrderViewFrame extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        label_name = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        label_grand_total = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        label_id = new javax.swing.JLabel();
-        label_created_date = new javax.swing.JLabel();
         txt_header = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_order_items = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -79,22 +61,6 @@ public class OrderViewFrame extends javax.swing.JFrame {
         setAlwaysOnTop(true);
         setResizable(false);
 
-        jLabel1.setText("Full Name");
-
-        label_name.setText("Item");
-
-        jLabel3.setText("Total Amt.");
-
-        label_grand_total.setText("123");
-
-        jLabel17.setText("Id");
-
-        jLabel7.setText("Created Date");
-
-        label_id.setText("1");
-
-        label_created_date.setText("2021-01-25");
-
         txt_header.setEditable(false);
         txt_header.setBackground(new java.awt.Color(153, 255, 255));
         txt_header.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
@@ -106,70 +72,45 @@ public class OrderViewFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Item");
-
         tbl_order_items.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Order No", "Product", "Qty", "Rate", "Description"
             }
         ));
         jScrollPane2.setViewportView(tbl_order_items);
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel4.setText("Order Item Details");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txt_header, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel17)
-                    .addComponent(jLabel2))
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label_created_date)
-                    .addComponent(label_grand_total)
-                    .addComponent(label_name)
-                    .addComponent(label_id)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+            .addComponent(txt_header, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(180, 180, 180)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(txt_header, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(label_id))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(label_name))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(label_grand_total))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(label_created_date))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 91, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(jLabel4)
+                .addGap(24, 24, 24)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addGap(101, 101, 101))
         );
 
         pack();
@@ -189,18 +130,10 @@ public class OrderViewFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JLabel label_created_date;
-    private javax.swing.JLabel label_grand_total;
-    private javax.swing.JLabel label_id;
-    private javax.swing.JLabel label_name;
     private javax.swing.JTable tbl_order_items;
     private javax.swing.JTextField txt_header;
     // End of variables declaration//GEN-END:variables
