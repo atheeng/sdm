@@ -13,7 +13,7 @@ public class OrderModelTable extends AbstractTableModel{
     List<OrderListDto> orderList = new ArrayList<>();
 
     private final String[] columnNames = new String[]{
-        "OrderBy", "OrderNo","ItmeNo", "TotalAmt", "Date","Action"
+        "Order By", "Order No.","ItmeNo", "Total Amt", "Date","ACTION"
     };
     private final Class[] columnClass = new Class[]{
         String.class, String.class , String.class, String.class,String.class,String.class

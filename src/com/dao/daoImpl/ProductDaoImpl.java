@@ -165,7 +165,7 @@ public class ProductDaoImpl implements ProductDao {
         try {
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product where product_name like '"+name+"%' and product_type like '"+type+"%' ");
+            ResultSet rs = statement.executeQuery("select id,product_name,product_type,price,total_quantity,description FROM product where product_name like '%"+name+"%' and product_type like '%"+type+"%' ");
             while (rs.next()) {
                 Product product = new Product();
                 product.setId(rs.getInt(1));

@@ -320,7 +320,6 @@ public class OrderDaoImpl implements OrderDao{
             conn = DataBaseConnection.getInstance().getConnection();
             String query = "SELECT oi.order_no,p.id,p.product_name,p.product_type,oi.qty,p.price,p.description FROM product p "
                     + "INNER JOIN order_item oi ON p.id=oi.product_id where oi.order_no=?";
-            System.out.println("query"+query);
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setString(1, orderNo);
             ResultSet rs = preparedStmt.executeQuery();
@@ -339,6 +338,40 @@ public class OrderDaoImpl implements OrderDao{
             System.out.println(e.getMessage());
         }
         return orderItemList;
+    }
+
+    @Override
+    public List<OrderListDto> getOrderListSearch(User user,String userName, String orderNo) {
+        String role=user.getRole().toString();
+        String params="";
+        if(role==(RoleTypeEnum.ADMIN.toString()) || role==(RoleTypeEnum.MANAGER.toString())){
+        }else{
+           params= "o.user_id="+user.getId()+" AND "; 
+        }
+        List<OrderListDto> orderList=new ArrayList<>();
+        try {
+            Connection conn = null;
+            conn = DataBaseConnection.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT CONCAT(u.first_name ,' ',u.last_name) AS NAME ,o.order_no,o.no_item,o.total_amount,o.order_date\n" +
+                    "FROM orders o INNER JOIN USER u ON o.user_id=u.id where "+params+"  u.username like '%"+userName+"%' AND o.order_no like '%"+orderNo+"%' ");
+            while (rs.next()) {
+                OrderListDto order=new OrderListDto();
+                order.setOrderBy(rs.getString(1));
+                order.setOrderNo(rs.getString(2));
+                order.setItemNo(rs.getInt(3));
+                order.setTotalAmt(rs.getDouble(4));
+                order.setOrderDate(rs.getString(5));
+                order.setAction("VIEW DETAILS");
+                orderList.add(order);
+            }
+            rs.close();
+            statement.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return orderList;
     }
 
 }

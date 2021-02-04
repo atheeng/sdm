@@ -16,7 +16,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import view.CustomerFrame;
 
 /**
  *
@@ -182,7 +181,7 @@ public class UserDaoImpl implements UserDao {
                 } catch (Exception e) {
                     System.out.println("error:" + e.getMessage());
                 }
-                return user.getUsername() + " Username Successfully Saved";
+                return user.getUsername()+"-SAVE";
             }
 
         } else {
@@ -201,11 +200,11 @@ public class UserDaoImpl implements UserDao {
                 preparedStmt.setInt(8, user.getId());
                 preparedStmt.executeUpdate();
                 preparedStmt.close();
-                System.out.println("Update");
+                
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return user.getUsername() + " Username Successfully Updated";
+            return user.getUsername() + "-UPDATE";
         }
 
     }

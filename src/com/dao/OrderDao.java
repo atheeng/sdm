@@ -24,5 +24,7 @@ public interface OrderDao {
    String purchase(List<Cart> list,User user);
    List<OrderListDto> getOrderList(User user);
    List<Map<String, String>> getOrderItemList(String orderNo);
+   List<OrderListDto> getOrderListSearch(User user,String userName,String orderNo);
+   
       
 }
