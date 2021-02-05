@@ -10,7 +10,7 @@ public class DataBaseConnection {
     private static Connection con;
     private String url = "jdbc:mysql://localhost:3306/online_order";
     private String username = "root";
-    private String password ="";
+    private String password ="root";
 
    private DataBaseConnection() throws SQLException {
         try {

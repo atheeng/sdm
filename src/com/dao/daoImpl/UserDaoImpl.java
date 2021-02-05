@@ -160,7 +160,7 @@ public class UserDaoImpl implements UserDao {
         if (id == 0) {
             boolean existingUser = existingUser(user.getUsername());
             if (existingUser == true) {
-                return user.getUsername() + " username is already exist please make unique. ";
+                return "EXIST";
             } else {
                 try {
                     conn = DataBaseConnection.getInstance().getConnection();
@@ -181,7 +181,7 @@ public class UserDaoImpl implements UserDao {
                 } catch (Exception e) {
                     System.out.println("error:" + e.getMessage());
                 }
-                return user.getUsername()+"-SAVE";
+                return user.getUsername()+" Customer Saved ";
             }
 
         } else {
@@ -204,7 +204,7 @@ public class UserDaoImpl implements UserDao {
             } catch (Exception e) {
                 System.out.println("error:" + e.getMessage());
             }
-            return user.getUsername() + "-UPDATE";
+            return user.getUsername() + " Customer Updated";
         }
 
     }

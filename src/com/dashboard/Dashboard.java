@@ -15,7 +15,6 @@ import com.dto.UserModelTable;
 import com.model.Product;
 import com.model.Cart;
 import com.model.User;
-import com.util.EmailSend;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1262,6 +1261,16 @@ public class Dashboard extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "mobile no is required", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        try {
+            Long number = Long.parseLong(txt_user_mobile_no.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "mobile should be numerice", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (mobileNo.length() != 10) {
+            JOptionPane.showMessageDialog(null, "mobile no should be 10", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         roleText = RoleTypeEnum.valueOf(roles);
         UserDao userDao = new UserDaoImpl();
         User user;
@@ -1279,26 +1288,19 @@ public class Dashboard extends javax.swing.JFrame {
             user.setPassword(password);
             user.setMobileNo(mobileNo);
         }
-        resetCustomerForm();
-        String result="";
-        try{
-            result = userDao.saveUpdate(user);
-        }catch(Exception e){
+        
+        try {
+          String result = userDao.saveUpdate(user);
+          if(result=="EXIST"){
+             JOptionPane.showMessageDialog(null, "This username already exist", "Success", JOptionPane.WARNING_MESSAGE); 
+             return;
+          }
+          JOptionPane.showMessageDialog(null, result, "Success", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "some thing error", "Success", JOptionPane.WARNING_MESSAGE);
         }
-        String[] email=result.split("-");
-        String success="";
-        if(email[1]=="UPDATE"){
-            success=email[0]+" updated";
-        }else{
-            success=email[0]+" saved";
-        }
-        String Emailstatus= EmailSend.send(email[0],"registration","your password:abc");
-        if(Emailstatus=="TRUE"){
-            success=success+ " and email sent";
-        }
-        JOptionPane.showMessageDialog(null, result, "Success", JOptionPane.WARNING_MESSAGE);
         txt_user_username.setEditable(true);
+        resetCustomerForm();
         loadTableCustomer();
     }//GEN-LAST:event_user_save_updateActionPerformed
 
@@ -1465,7 +1467,7 @@ public class Dashboard extends javax.swing.JFrame {
             deleteAllTempOrderList();
             loadTableTempOrder();
             loadTableProduct();
-            JOptionPane.showMessageDialog(null, "purchase order done", "Success", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Order Successful", "Success", JOptionPane.WARNING_MESSAGE);
         } else {
             return;
         }
@@ -1610,9 +1612,10 @@ public class Dashboard extends javax.swing.JFrame {
             product.setTotalQty(qty);
             product.setDescription(description);
         }
-        resetProductForm();
+        
         String result = productDao.saveUpdate(product);
         JOptionPane.showMessageDialog(null, result, "Success", JOptionPane.WARNING_MESSAGE);
+        resetProductForm();
         txt_product_name.setEditable(true);
         cb_product_type.setEnabled(true);
         loadTableProduct();
