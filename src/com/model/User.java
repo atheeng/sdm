@@ -3,12 +3,7 @@ package com.model;
 import com.Enum.RoleTypeEnum;
 
 public class User {
-
-    public User() {
-    }
-
     private int id;
-
     private String username;
     private String password;
     private RoleTypeEnum role;
@@ -17,7 +12,8 @@ public class User {
     private String mobileNo;
     private String address;
     
-    
+    public User() {
+    }
 
     public int getId() {
         return id;

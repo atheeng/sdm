@@ -1354,7 +1354,7 @@
                           <Table columnCount="6" rowCount="1">
                             <Column editable="false" title="Order By" type="java.lang.Object"/>
                             <Column editable="false" title="Order No." type="java.lang.Object"/>
-                            <Column editable="false" title="Item No." type="java.lang.Object"/>
+                            <Column editable="false" title="No. of Items" type="java.lang.Object"/>
                             <Column editable="true" title="Total Amt." type="java.lang.Object"/>
                             <Column editable="false" title="Order Date" type="java.lang.Object"/>
                             <Column editable="true" title="Action" type="java.lang.Object"/>

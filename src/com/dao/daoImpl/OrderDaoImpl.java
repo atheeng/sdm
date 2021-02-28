@@ -198,7 +198,7 @@ public class OrderDaoImpl implements OrderDao{
             Connection conn = null;
             conn = DataBaseConnection.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT IFNULL(MAX(id),'1') as id,DATE_FORMAT(NOW(),'%Y-%m-%d') as date FROM orders");
+            ResultSet rs = statement.executeQuery("SELECT IFNULL(MAX(id+1),'1') as id,DATE_FORMAT(NOW(),'%Y-%m-%d') as date FROM orders");
             while (rs.next()) {
                 id = rs.getString("id");
                 date = rs.getString("date");

@@ -52,6 +52,8 @@ public class Dashboard extends javax.swing.JFrame {
         txt_nos_items.setEditable(false);
         txt_grand_total.setEditable(false);
         menuTab.setSelectedIndex(0);
+        
+        deleteAllTempOrderList();
 
         int selectedMenu = menuTab.getSelectedIndex();
         String MenuName = menuTab.getTitleAt(selectedMenu);
@@ -998,7 +1000,7 @@ public class Dashboard extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Order By", "Order No.", "Item No.", "Total Amt.", "Order Date", "Action"
+                "Order By", "Order No.", "No. of Items", "Total Amt.", "Order Date", "Action"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1044,10 +1046,10 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel8.setText("Order No.");
 
         txt_search_user.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
             public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
                 txt_search_userInputMethodTextChanged(evt);
+            }
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
         });
         txt_search_user.addActionListener(new java.awt.event.ActionListener() {
